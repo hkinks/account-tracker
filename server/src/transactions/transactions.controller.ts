@@ -9,7 +9,9 @@ function convertAmountToString(transaction: TransactionDto): BankTransaction {
     amount: transaction.amount.toString(),
     tag: transaction.tag || null,
     tagEntity: null,
-    tagId: null
+    tagId: null,
+    accountId: null,
+    account: null
   };
 }
 
