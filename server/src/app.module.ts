@@ -7,6 +7,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TerminusModule } from '@nestjs/terminus';
 import { AccountsModule } from './accounts/accounts.module';
+import { BalanceRecordsModule } from './balance-records/balance-records.module';
+import { BalanceRecord } from './balance-records/balance-records.entity';
 
 @Module({
   imports: [
@@ -16,11 +18,15 @@ import { AccountsModule } from './accounts/accounts.module';
       url: process.env.DB_URL || (() => { throw new Error('DB_URL is not set') })(),
       autoLoadEntities: true,
       synchronize: true, // set to false in production
+      entities: [
+        BalanceRecord
+      ],
     }),
     TerminusModule,
     TransactionsModule,
     TagsModule,
     AccountsModule,
+    BalanceRecordsModule,
   ],
   controllers: [AppController],
   providers: [AppService]
