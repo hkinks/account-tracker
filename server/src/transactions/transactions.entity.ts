@@ -2,7 +2,7 @@ import { Account } from 'src/accounts/accounts.entity';
 import { Tag } from '../tags/tags.entity';
 import { Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, JoinColumn } from 'typeorm';
 
-@Entity('bank_transactions')
+@Entity('bank_transaction')
 @Unique(['date', 'sender', 'receiver', 'description', 'amount', 'currency'])
 export class BankTransaction {
   @PrimaryGeneratedColumn()

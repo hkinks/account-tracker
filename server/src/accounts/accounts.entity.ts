@@ -1,7 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { BankTransaction } from '../transactions/transactions.entity';
+import { BalanceRecord } from '../balance-records/balance-records.entity';
 
-@Entity()
+@Entity('account')
 export class Account {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -23,4 +24,7 @@ export class Account {
 
   @OneToMany(() => BankTransaction, transaction => transaction.account)
   transactions: BankTransaction[];
+
+  @OneToMany(() => BalanceRecord, balanceRecord => balanceRecord.account)
+  balanceRecords: BalanceRecord[];
 }
