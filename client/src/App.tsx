@@ -1,13 +1,13 @@
 import './App.css'
+import Toaster from './components/Toaster'
 import Transactions from './components/Transactions'
 
 function App() {
 
   return (
     <>
-      <div>
-        <Transactions />
-      </div>
+      <Toaster />
+      <Transactions />
     </>
   )
 }

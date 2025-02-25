@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import styled from 'styled-components';
+import TagManager from './TagManager';
 
 const TransactionsContainer = styled.div`
   padding: 20px;
@@ -27,6 +28,7 @@ interface Transaction {
   description: string;
   amount: number;
   currency: string;
+  tag?: string;
 }
 
 // Transactions component
@@ -38,8 +40,10 @@ const Transactions: React.FC = () => {
   useEffect(() => {
     api.getTransactions().then((data) => {
       setTransactions(data);
+      window.toaster?.success('Transactions fetched successfully.');
     }).catch((error) => {
       console.error('Error fetching transactions:', error);
+      window.toaster?.error('Failed to fetch transactions. Please try again.');
     });
   }, []);
 
@@ -54,6 +58,7 @@ const Transactions: React.FC = () => {
             <th>Description</th>
             <th>Amount</th>
             <th>Currency</th>
+            <th>Tag</th>
           </tr>
         </thead>
         <tbody>
@@ -63,6 +68,12 @@ const Transactions: React.FC = () => {
               <td>{transaction.description}</td>
               <td>{transaction.amount.toFixed(2)}</td>
               <td>{transaction.currency}</td>
+              <td>
+                <TagManager 
+                  tag={transaction.tag} 
+                  transactionId={transaction.id}
+                />
+              </td>
             </tr>
           ))}
         </tbody>
