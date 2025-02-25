@@ -1,19 +1,22 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import ReactDOM from 'react-dom/client';
+import App from './App'; // Import your root App component
 
-const render = (Component: React.ComponentType) => {
-  ReactDOM.render(
-    <Component />,
-    document.getElementById('root')
-  );
-};
+// Assuming you have an element with the ID 'root' in your index.html
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Failed to find the root element');
 
-render(App);
+// Create a root.
+const root = ReactDOM.createRoot(rootElement);
 
-if (module.hot) {
-  module.hot.accept('./App', () => {
-    const NextApp = require('./App').default;
-    render(NextApp);
-  });
-} 
+// Initial render: Render an element to the root.
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+// If you want to enable Hot Module Replacement (HMR)
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}

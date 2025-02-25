@@ -13,7 +13,7 @@ export class BankTransaction {
   description: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
-  amount: number;
+  amount: string;  //In TypeORM, when you use the decimal type for a column, the value is returned as a string by default.
 
   @Column({ type: 'varchar', nullable: false, default: 'EUR' })
   currency: string;
