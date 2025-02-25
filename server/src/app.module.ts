@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionsModule } from './transactions/transactions.module';
+import { TagsModule } from './tags/tags.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TerminusModule } from '@nestjs/terminus';
@@ -18,6 +19,7 @@ import { TerminusModule } from '@nestjs/terminus';
     }),
     TerminusModule,
     TransactionsModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService]

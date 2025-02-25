@@ -1,66 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { BankTransaction } from './transactions.entity';
-import { IsDate, IsNumber, IsString, IsNotEmpty, MinLength, Min } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-
-export interface TransactionDto {
-  id: number;
-  date: Date;
-  description: string;
-  amount: number;
-  currency: string;
-  sender: string;
-  receiver: string;
-  tag?: string;
-}
+import { CreateTransactionDto, TransactionDto } from './transactions.interface';
 
 function convertAmountToString(transaction: TransactionDto): BankTransaction {
   return {
     ...transaction,
     amount: transaction.amount.toString(),
-    tag: transaction.tag || null
+    tag: transaction.tag || null,
+    tagEntity: null,
+    tagId: null
   };
-}
-
-export class CreateTransactionDto {
-  @ApiProperty({ example: 1 })
-  id: number;
-
-  @ApiProperty({ example: '2025-02-25T00:00:00Z' })
-  @IsDate()
-  @Type(() => Date)
-  date: Date;
-
-  @ApiProperty({ example: 'Test transaction', minLength: 3 })
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(3)
-  description: string;
-
-  @ApiProperty({ example: 100.00, minimum: 0 })
-  @IsNumber()
-  @Min(0)
-  amount: number;
-
-  @ApiProperty({ example: 'EUR' })
-  @IsString()
-  @IsNotEmpty()
-  currency: string;
-
-  @ApiProperty({ example: 'John' })
-  @IsString()
-  @IsNotEmpty()
-  sender: string;
-
-  @ApiProperty({ example: 'Jane' })
-  @IsString()
-  @IsNotEmpty()
-  receiver: string;
-
-  @ApiProperty({ example: 'Tag', required: false })
-  tag?: string;
 }
 
 @Controller('transactions')

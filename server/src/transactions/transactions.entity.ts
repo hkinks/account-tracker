@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Tag } from '../tags/tags.entity';
+import { Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('bank_transactions')
 @Unique(['date', 'sender', 'receiver', 'description', 'amount', 'currency'])
@@ -24,6 +25,13 @@ export class BankTransaction {
   @Column({ type: 'varchar', nullable: false })
   receiver: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  tag: string | null;
+  @Column({ nullable: true })
+  tag: string;
+
+  @ManyToOne(() => Tag, tag => tag.transactions, { nullable: true })
+  @JoinColumn({ name: 'tagId' })
+  tagEntity: Tag;
+
+  @Column({ nullable: true })
+  tagId: number;
 } 
