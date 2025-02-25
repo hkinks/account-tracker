@@ -22,4 +22,20 @@ export const api = {
     }
     return response.json();
   },
+
+  async getAccounts() {
+    const response = await fetch(`${API_BASE_URL}/accounts`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  },
+
+  async getBalanceRecords() {
+    const response = await fetch(`${API_BASE_URL}/balance-records`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  },
 }; 
