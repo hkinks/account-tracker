@@ -1,5 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
+import styled from 'styled-components';
+
+const TransactionsContainer = styled.div`
+  padding: 20px;
+`;
+
+const TransactionsTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background-color: #4CAF50;
+    color: white;
+  }
+`;
 
 // Define the structure of a transaction object
 interface Transaction {
@@ -26,9 +45,9 @@ const Transactions: React.FC = () => {
 
   // Render the transactions in a table
   return (
-    <div>
+    <TransactionsContainer>
       <h2>Transactions</h2>
-      <table>
+      <TransactionsTable>
         <thead>
           <tr>
             <th>Date</th>
@@ -42,13 +61,13 @@ const Transactions: React.FC = () => {
             <tr key={transaction.id}>
               <td>{transaction.date}</td>
               <td>{transaction.description}</td>
-              <td>{parseFloat(transaction.amount).toFixed(2)}</td>
+              <td>{transaction.amount.toFixed(2)}</td>
               <td>{transaction.currency}</td>
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+      </TransactionsTable>
+    </TransactionsContainer>
   );
 };
 
