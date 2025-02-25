@@ -23,4 +23,7 @@ export class BankTransaction {
 
   @Column({ type: 'varchar', nullable: false })
   receiver: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  tag: string | null;
 } 

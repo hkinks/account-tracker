@@ -45,4 +45,48 @@ describe('TransactionsController', () => {
       expect(typeof transaction.amount).toBe('number');
     });
   });
+
+  it('should return a single transaction by id', async () => {
+    const result = await controller.getTransactionById(1);
+    expect(result).toEqual(mockTransactions[0]);
+    expect(service.getTransactionById).toHaveBeenCalledWith(1);
+  });
+
+  it('should create a new transaction', async () => {
+    const newTransaction = {
+      id: 2,
+      date: new Date('2024-03-21'),
+      description: 'New transaction',
+      amount: 200.00,
+      currency: 'EUR',
+      sender: 'John',
+      receiver: 'Jane'
+    };
+    const result = await controller.createTransaction(newTransaction);
+    expect(result).toEqual(newTransaction);
+    expect(service.createTransaction).toHaveBeenCalledWith(newTransaction);
+  });
+
+  it('should update a transaction', async () => {
+    const updatedTransaction = {
+      id: 1,
+      date: new Date('2024-03-20'),
+      description: 'Updated transaction',
+      amount: 150.00,
+      currency: 'EUR',
+      sender: 'John',
+      receiver: 'Jane'
+    };
+    const result = await controller.updateTransaction(1, updatedTransaction);
+    expect(result).toEqual(updatedTransaction);
+    expect(service.updateTransaction).toHaveBeenCalledWith(1, updatedTransaction);
+
+
+  });
+
+  it('should delete a transaction', async () => {
+    await controller.deleteTransaction(1);
+    expect(service.deleteTransaction).toHaveBeenCalledWith(1);
+  });
+  
 });
