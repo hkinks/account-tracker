@@ -38,4 +38,11 @@ describe('TransactionsController', () => {
     expect(result).toEqual(mockTransactions);
     expect(service.getTransactions).toHaveBeenCalled();
   });
+
+  it('should return transactions with amount as float', async () => {
+    const result = await controller.getTransactions();
+    result.forEach(transaction => {
+      expect(typeof transaction.amount).toBe('number');
+    });
+  });
 });

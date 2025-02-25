@@ -18,6 +18,7 @@ export class TransactionsService {
     });
     
     console.log('Found transactions:', transactions.length);
+    console.log(transactions[0].amount)
     return transactions;
   }
 }
