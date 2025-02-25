@@ -27,7 +27,7 @@ interface TagManagerProps {
   tagColor?: string;
 }
 
-const TagManager: React.FC<TagManagerProps> = ({ 
+const Tag: React.FC<TagManagerProps> = ({ 
   tag, 
   transactionId, 
   tagColor = '#111'
@@ -91,4 +91,4 @@ const TagManager: React.FC<TagManagerProps> = ({
   );
 };
 
-export default TagManager; 
+export default Tag; 
