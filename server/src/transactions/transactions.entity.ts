@@ -1,3 +1,4 @@
+import { Account } from 'src/accounts/accounts.entity';
 import { Tag } from '../tags/tags.entity';
 import { Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, JoinColumn } from 'typeorm';
 
@@ -34,4 +35,11 @@ export class BankTransaction {
 
   @Column({ nullable: true })
   tagId: number;
+
+  @Column({ nullable: true })
+  accountId: string;
+
+  @ManyToOne(() => Account, account => account.transactions, { nullable: true })
+  @JoinColumn({ name: 'accountId' })
+  account: Account;
 } 

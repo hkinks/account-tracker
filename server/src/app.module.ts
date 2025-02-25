@@ -6,7 +6,7 @@ import { TagsModule } from './tags/tags.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TerminusModule } from '@nestjs/terminus';
-
+import { AccountsModule } from './accounts/accounts.module';
 
 @Module({
   imports: [
@@ -20,6 +20,7 @@ import { TerminusModule } from '@nestjs/terminus';
     TerminusModule,
     TransactionsModule,
     TagsModule,
+    AccountsModule,
   ],
   controllers: [AppController],
   providers: [AppService]
