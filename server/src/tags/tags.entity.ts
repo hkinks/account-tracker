@@ -15,6 +15,6 @@ export class Tag {
   @Column({ nullable: true, default: '#CCCCCC' })
   color: string;
 
-  @OneToMany(() => BankTransaction, transaction => transaction.tagEntity)
+  @OneToMany(() => BankTransaction, (transaction) => transaction.tagEntity)
   transactions: BankTransaction[];
-} 
+}

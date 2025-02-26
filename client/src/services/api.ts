@@ -38,4 +38,26 @@ export const api = {
     }
     return response.json();
   },
-}; 
+
+  async createBalanceRecord(data: {
+    accountId: number;
+    balance: number;
+    recordedAt?: string;
+  }) {
+    const response = await fetch(`${API_BASE_URL}/balance-records`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to create balance record: ${response.statusText}`,
+      );
+    }
+
+    return await response.json();
+  },
+};

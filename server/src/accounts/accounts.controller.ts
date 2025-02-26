@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { Account } from './accounts.entity';
 import { CreateAccountDto, UpdateAccountDto } from './accounts.interface';
 import { AccountsService } from './accounts.service';
@@ -23,7 +31,10 @@ export class AccountsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto): Promise<Account> {
+  update(
+    @Param('id') id: string,
+    @Body() updateAccountDto: UpdateAccountDto,
+  ): Promise<Account> {
     return this.accountsService.update(id, updateAccountDto);
   }
 
@@ -31,4 +42,4 @@ export class AccountsController {
   remove(@Param('id') id: string): Promise<void> {
     return this.accountsService.remove(id);
   }
-} 
+}

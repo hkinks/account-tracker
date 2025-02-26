@@ -1,6 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreateAccountDto {
   @ApiProperty({ example: 'Savings Account' })
@@ -13,7 +19,7 @@ export class CreateAccountDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({ example: 1000.50, required: false })
+  @ApiProperty({ example: 1000.5, required: false })
   @IsOptional()
   @IsNumber()
   balance?: number;
@@ -28,6 +34,5 @@ export class CreateAccountDto {
   @IsString()
   accountType?: string;
 }
-
 
 export class UpdateAccountDto extends PartialType(CreateAccountDto) {}

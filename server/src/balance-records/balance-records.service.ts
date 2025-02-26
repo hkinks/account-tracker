@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BalanceRecord } from './balance-records.entity';
-import { CreateBalanceRecordDto, UpdateBalanceRecordDto } from './balance-records.interface';
+import {
+  CreateBalanceRecordDto,
+  UpdateBalanceRecordDto,
+} from './balance-records.interface';
 
 @Injectable()
 export class BalanceRecordsService {
@@ -11,8 +14,12 @@ export class BalanceRecordsService {
     private balanceRecordsRepository: Repository<BalanceRecord>,
   ) {}
 
-  create(createBalanceRecordDto: CreateBalanceRecordDto): Promise<BalanceRecord> {
-    const balanceRecord = this.balanceRecordsRepository.create(createBalanceRecordDto);
+  create(
+    createBalanceRecordDto: CreateBalanceRecordDto,
+  ): Promise<BalanceRecord> {
+    const balanceRecord = this.balanceRecordsRepository.create(
+      createBalanceRecordDto,
+    );
     return this.balanceRecordsRepository.save(balanceRecord);
   }
 
@@ -20,9 +27,9 @@ export class BalanceRecordsService {
     const balanceRecords = await this.balanceRecordsRepository.find({
       relations: ['account'],
     });
-    return balanceRecords.map(record => ({
+    return balanceRecords.map((record) => ({
       ...record,
-      balance: Number(record.balance)
+      balance: Number(record.balance),
     }));
   }
 
@@ -41,7 +48,10 @@ export class BalanceRecordsService {
     });
   }
 
-  async update(id: string, updateBalanceRecordDto: UpdateBalanceRecordDto): Promise<BalanceRecord> {
+  async update(
+    id: string,
+    updateBalanceRecordDto: UpdateBalanceRecordDto,
+  ): Promise<BalanceRecord> {
     await this.balanceRecordsRepository.update(id, updateBalanceRecordDto);
     return this.findOne(id);
   }
@@ -49,4 +59,4 @@ export class BalanceRecordsService {
   async remove(id: string): Promise<void> {
     await this.balanceRecordsRepository.delete(id);
   }
-} 
+}

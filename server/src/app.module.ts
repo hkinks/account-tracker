@@ -15,12 +15,14 @@ import { BalanceRecord } from './balance-records/balance-records.entity';
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DB_URL || (() => { throw new Error('DB_URL is not set') })(),
+      url:
+        process.env.DB_URL ||
+        (() => {
+          throw new Error('DB_URL is not set');
+        })(),
       autoLoadEntities: true,
       synchronize: true, // set to false in production
-      entities: [
-        BalanceRecord
-      ],
+      entities: [BalanceRecord],
     }),
     TerminusModule,
     TransactionsModule,
@@ -29,6 +31,6 @@ import { BalanceRecord } from './balance-records/balance-records.entity';
     BalanceRecordsModule,
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService],
 })
 export class AppModule {}

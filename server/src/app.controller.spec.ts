@@ -7,7 +7,7 @@ describe('AppController', () => {
   let appController: AppController;
   let mockHealthCheckService;
   let mockTypeOrmHealthIndicator;
-  
+
   beforeEach(async () => {
     // Create mock implementations
     mockHealthCheckService = {
@@ -15,18 +15,18 @@ describe('AppController', () => {
         status: 'ok',
         details: {
           database: {
-            status: 'up'
-          }
-        }
-      })
+            status: 'up',
+          },
+        },
+      }),
     };
-    
+
     mockTypeOrmHealthIndicator = {
       pingCheck: jest.fn().mockResolvedValue({
-        status: 'up'
-      })
+        status: 'up',
+      }),
     };
-    
+
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
       providers: [
@@ -34,22 +34,22 @@ describe('AppController', () => {
         // Use the actual class tokens but provide mock implementations
         {
           provide: HealthCheckService,
-          useValue: mockHealthCheckService
+          useValue: mockHealthCheckService,
         },
         {
           provide: TypeOrmHealthIndicator,
-          useValue: mockTypeOrmHealthIndicator
-        }
+          useValue: mockTypeOrmHealthIndicator,
+        },
       ],
     }).compile();
-    
+
     appController = app.get<AppController>(AppController);
   });
-  
+
   describe('health check', () => {
     it('should check database health', async () => {
       const result = await appController.check();
-      
+
       expect(result.status).toBe('ok');
       expect(result.details.database.status).toBe('up');
       expect(mockHealthCheckService.check).toHaveBeenCalled();

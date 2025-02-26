@@ -37,7 +37,7 @@ const StyledNavLink = styled(NavLink)`
   }
 
   &.active {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
   }
 `;
@@ -56,23 +56,17 @@ const Menu: React.FC<MenuProps> = ({ className }) => {
           </StyledNavLink>
         </MenuItem>
         <MenuItem>
-          <StyledNavLink to="/transactions">
-            Transactions
-          </StyledNavLink>
+          <StyledNavLink to="/transactions">Transactions</StyledNavLink>
         </MenuItem>
         <MenuItem>
-          <StyledNavLink to="/accounts">
-            Accounts
-          </StyledNavLink>
+          <StyledNavLink to="/accounts">Accounts</StyledNavLink>
         </MenuItem>
         <MenuItem>
-          <StyledNavLink to="/balance-records">
-            Balance Records
-          </StyledNavLink>
+          <StyledNavLink to="/balance-records">Balance Records</StyledNavLink>
         </MenuItem>
       </MenuList>
     </MenuContainer>
   );
 };
 
-export default Menu; 
+export default Menu;

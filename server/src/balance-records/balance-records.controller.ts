@@ -1,7 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { BalanceRecordsService } from './balance-records.service';
-import { BalanceRecordDto, CreateBalanceRecordDto, UpdateBalanceRecordDto } from './balance-records.interface';
+import {
+  BalanceRecordDto,
+  CreateBalanceRecordDto,
+  UpdateBalanceRecordDto,
+} from './balance-records.interface';
 import { BalanceRecord } from './balance-records.entity';
 
 @ApiTags('balance-records')
@@ -11,8 +24,13 @@ export class BalanceRecordsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new balance record' })
-  @ApiResponse({ status: 201, description: 'The balance record has been created.' })
-  create(@Body() createBalanceRecordDto: CreateBalanceRecordDto): Promise<BalanceRecord> {
+  @ApiResponse({
+    status: 201,
+    description: 'The balance record has been created.',
+  })
+  create(
+    @Body() createBalanceRecordDto: CreateBalanceRecordDto,
+  ): Promise<BalanceRecord> {
     return this.balanceRecordsService.create(createBalanceRecordDto);
   }
 
@@ -35,7 +53,10 @@ export class BalanceRecordsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a balance record' })
-  @ApiResponse({ status: 200, description: 'The balance record has been updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The balance record has been updated.',
+  })
   update(
     @Param('id') id: string,
     @Body() updateBalanceRecordDto: UpdateBalanceRecordDto,
@@ -45,8 +66,11 @@ export class BalanceRecordsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a balance record' })
-  @ApiResponse({ status: 200, description: 'The balance record has been deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The balance record has been deleted.',
+  })
   remove(@Param('id') id: string): Promise<void> {
     return this.balanceRecordsService.remove(id);
   }
-} 
+}

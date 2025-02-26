@@ -10,13 +10,14 @@ const TransactionsContainer = styled.div`
 const TransactionsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  th, td {
+  th,
+  td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
   }
   th {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
   }
 `;
@@ -38,12 +39,17 @@ const Transactions: React.FC = () => {
 
   // Start of Selection
   useEffect(() => {
-    api.getTransactions().then((data) => {
-      setTransactions(data);
-    }).catch((error) => {
-      console.error('Error fetching transactions:', error);
-      window.toaster?.error('Failed to fetch transactions. Please try again.');
-    });
+    api
+      .getTransactions()
+      .then((data) => {
+        setTransactions(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching transactions:', error);
+        window.toaster?.error(
+          'Failed to fetch transactions. Please try again.',
+        );
+      });
   }, []);
 
   // Render the transactions in a table
@@ -68,10 +74,7 @@ const Transactions: React.FC = () => {
               <td>{transaction.amount.toFixed(2)}</td>
               <td>{transaction.currency}</td>
               <td>
-                <Tag 
-                  tag={transaction.tag} 
-                  transactionId={transaction.id}
-                />
+                <Tag tag={transaction.tag} transactionId={transaction.id} />
               </td>
             </tr>
           ))}

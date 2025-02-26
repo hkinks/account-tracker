@@ -1,12 +1,12 @@
-import './App.css'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Toaster from './components/Toaster'
-import Menu from './components/Menu'
-import Transactions from './pages/Transactions'
-import Main from './pages/Main'
-import Accounts from './pages/Accounts'
-import BalanceRecords from './pages/BalanceRecords'
-import styled from 'styled-components'
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Toaster from './components/Toaster';
+import Menu from './components/Menu';
+import Transactions from './pages/Transactions';
+import Main from './pages/Main';
+import Accounts from './pages/Accounts';
+import BalanceRecords from './pages/BalanceRecords';
+import styled from 'styled-components';
 
 const AppContainer = styled.div`
   max-width: 1280px;
@@ -37,7 +37,7 @@ function App() {
         </ContentContainer>
       </AppContainer>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

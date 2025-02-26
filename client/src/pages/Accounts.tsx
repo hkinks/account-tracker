@@ -11,13 +11,14 @@ const AccountsContainer = styled.div`
 const AccountsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  th, td {
+  th,
+  td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
   }
   th {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
   }
 `;
@@ -34,12 +35,15 @@ const Accounts: React.FC = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
 
   useEffect(() => {
-    api.getAccounts().then((data) => {
-      setAccounts(data);
-    }).catch((error) => {
-      console.error('Error fetching accounts:', error);
-      window.toaster?.error('Failed to fetch accounts. Please try again.');
-    });
+    api
+      .getAccounts()
+      .then((data) => {
+        setAccounts(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching accounts:', error);
+        window.toaster?.error('Failed to fetch accounts. Please try again.');
+      });
   }, []);
 
   return (
