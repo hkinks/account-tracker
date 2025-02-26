@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { api } from '../../services/api';
+import { BalanceRecord } from '../../pages/BalanceRecords';
 
-// Move all styled component definitions outside the component function
+// Styled components
 const FormGroup = styled.div`
   margin-bottom: 15px;
 `;
@@ -40,21 +42,48 @@ const SubmitButton = styled.button`
 `;
 
 interface BalanceRecordFormProps {
-  onSubmit: (data: { accountId: number; balance: number }) => void;
+  onSubmit: (data: BalanceRecord) => void;
   accounts?: Array<{ id: number; name: string }>;
+  initialData?: Partial<BalanceRecord>;
 }
 
+// Main component
 const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
   onSubmit,
-  accounts = [],
+  accounts: propAccounts,
+  initialData = {},
 }) => {
-  const [formData, setFormData] = useState({
-    accountId: '',
-    balance: '',
+  const [formData, setFormData] = useState<BalanceRecord>({
+    accountId: initialData.accountId || '',
+    balance: initialData.balance || 0,
   });
+  const [accounts, setAccounts] = useState<Array<{ id: number; name: string }>>(propAccounts || []);
+  const [, setIsLoading] = useState<boolean>(propAccounts ? false : true);
+  const [, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Only fetch accounts if they weren't provided as props
+    if (!propAccounts) {
+      const fetchAccounts = async () => {
+        try {
+          setIsLoading(true);
+          const data = await api.getAccounts();
+          setAccounts(data);
+          setError(null);
+        } catch (err) {
+          setError('Failed to load accounts. Please try again later.');
+          console.error('Error fetching accounts:', err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchAccounts();
+    }
+  }, [propAccounts]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData({
@@ -66,8 +95,8 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      accountId: parseInt(formData.accountId, 10),
-      balance: parseFloat(formData.balance),
+      accountId: formData.accountId,
+      balance: formData.balance,
     });
   };
 
@@ -83,12 +112,11 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
           required
         >
           <option value="">Select an account</option>
-          {accounts &&
-            accounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
+          {accounts.map(account => (
+            <option key={account.id} value={account.id}>
+              {account.name}
+            </option>
+          ))}
         </Select>
       </FormGroup>
       <FormGroup>
@@ -105,6 +133,47 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
       </FormGroup>
       <SubmitButton type="submit">Submit</SubmitButton>
     </form>
+  );
+};
+
+// Create a separate component for just the form fields
+export const BalanceRecordFields: React.FC<{
+  formData: BalanceFormData;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  accounts?: Array<{ id: number; name: string }>;
+}> = ({ formData, onChange, accounts = [] }) => {
+  return (
+    <>
+      <FormGroup>
+        <Label htmlFor="accountId">Account:</Label>
+        <Select
+          id="accountId"
+          name="accountId"
+          value={formData.accountId}
+          onChange={onChange}
+          required
+        >
+          <option value="">Select an account</option>
+          {accounts.map(account => (
+            <option key={account.id} value={account.id}>
+              {account.name}
+            </option>
+          ))}
+        </Select>
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="balance">Balance:</Label>
+        <Input
+          type="number"
+          id="balance"
+          name="balance"
+          value={formData.balance}
+          onChange={onChange}
+          step="0.01"
+          required
+        />
+      </FormGroup>
+    </>
   );
 };
 
