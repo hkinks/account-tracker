@@ -54,8 +54,11 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
   initialData = {},
 }) => {
   const [formData, setFormData] = useState<BalanceRecord>({
+    id: initialData.id || crypto.randomUUID(),
     accountId: initialData.accountId || '',
     balance: initialData.balance || 0,
+    accountName: initialData.accountName || '',
+    recordedAt: initialData.recordedAt || new Date(),
   });
   const [accounts, setAccounts] = useState<Array<{ id: number; name: string }>>(propAccounts || []);
   const [, setIsLoading] = useState<boolean>(propAccounts ? false : true);
@@ -95,8 +98,11 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
+      id: formData.id,
       accountId: formData.accountId,
       balance: formData.balance,
+      accountName: formData.accountName,
+      recordedAt: formData.recordedAt,
     });
   };
 

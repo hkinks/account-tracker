@@ -28,6 +28,9 @@ export class BalanceRecord {
   @CreateDateColumn({ type: 'timestamp with time zone', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
   datetime: Date;
 
+  @CreateDateColumn({ type: 'timestamp with time zone', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
+  recordedAt: Date;
+
   @ManyToOne(() => Account, (account) => account.balanceRecords)
   account: Account;
 
