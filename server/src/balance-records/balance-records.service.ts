@@ -16,17 +16,21 @@ export class BalanceRecordsService {
     return this.balanceRecordsRepository.save(balanceRecord);
   }
 
-  findAll(): Promise<BalanceRecord[]> {
-    return this.balanceRecordsRepository.find({
+  async findAll(): Promise<BalanceRecord[]> {
+    const balanceRecords = await this.balanceRecordsRepository.find({
       relations: ['account'],
     });
+    return balanceRecords.map(record => ({
+      ...record,
+      balance: Number(record.balance)
+    }));
   }
 
   findByAccountId(accountId: string): Promise<BalanceRecord[]> {
     return this.balanceRecordsRepository.find({
       where: { accountId },
       relations: ['account'],
-      order: { recordedAt: 'DESC' },
+      order: { datetime: 'DESC' },
     });
   }
 

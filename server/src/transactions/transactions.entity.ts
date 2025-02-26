@@ -1,4 +1,4 @@
-import { Account } from 'src/accounts/accounts.entity';
+import { Account } from '../accounts/accounts.entity';
 import { Tag } from '../tags/tags.entity';
 import { Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, JoinColumn } from 'typeorm';
 
