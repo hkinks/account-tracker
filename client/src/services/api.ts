@@ -1,4 +1,4 @@
-import { BalanceRecord } from "../pages/BalanceRecords";
+import { BalanceRecord, CreateBalanceRecordDto } from "../pages/BalanceRecords";
 
 const API_BASE_URL = 'http://localhost:3000/api/v1';
 
@@ -41,7 +41,7 @@ export const api = {
     return response.json();
   },
 
-  async createBalanceRecord(data: BalanceRecord) {
+  async createBalanceRecord(data: CreateBalanceRecordDto) {
     const response = await fetch(`${API_BASE_URL}/balance-records`, {
       method: 'POST',
       headers: {
@@ -57,5 +57,16 @@ export const api = {
     }
 
     return await response.json();
+  },
+
+  async deleteBalanceRecord(id: string) {
+    const response = await fetch(`${API_BASE_URL}/balance-records/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return;
   },
 };

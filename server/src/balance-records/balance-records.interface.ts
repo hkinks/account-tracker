@@ -31,8 +31,5 @@ export class BalanceRecordDto {
   balance: number;
 
   @ApiProperty({ example: new Date() })
-  datetime: Date;
-
-  @ApiProperty({ example: new Date() })
   recordedAt: Date;
 }
