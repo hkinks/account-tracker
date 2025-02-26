@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { api } from '../services/api';
 import Modal from '../components/Modal/Modal';
 import BalanceRecordForm from '../components/Forms/BalanceRecordForm';
+import { FaTrash } from 'react-icons/fa';
 
 const BalanceRecordsContainer = styled.div`
   padding: 20px;
@@ -33,6 +34,27 @@ const StyledButton = styled.button`
   
   &:hover {
     background-color: #45a049;
+  }
+`;
+
+const DeleteButton = styled.button`
+  padding: 5px 10px;
+  background-color: #666666;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background-color: #555555;
+  }
+  
+  &:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
   }
 `;
 
@@ -137,12 +159,13 @@ const BalanceRecords: React.FC = () => {
               <td>{record.balance.toFixed(2)}</td>
               <td>{record.recordedAt.toLocaleString()}</td>
               <td>
-                <button
+                <DeleteButton
                   onClick={() => handleDeleteRecord(record.id)}
                   disabled={isLoading}
+                  title="Delete record"
                 >
-                  Delete
-                </button>
+                  <FaTrash />
+                </DeleteButton>
               </td>
             </tr>
           ))}
