@@ -1,4 +1,6 @@
-const API_BASE_URL = '/api/v1';
+import { BalanceRecord } from "../pages/BalanceRecords";
+
+const API_BASE_URL = 'http://localhost:3000/api/v1';
 
 export const api = {
   async getTransactions() {
@@ -39,11 +41,7 @@ export const api = {
     return response.json();
   },
 
-  async createBalanceRecord(data: {
-    accountId: number;
-    balance: number;
-    recordedAt?: string;
-  }) {
+  async createBalanceRecord(data: BalanceRecord) {
     const response = await fetch(`${API_BASE_URL}/balance-records`, {
       method: 'POST',
       headers: {

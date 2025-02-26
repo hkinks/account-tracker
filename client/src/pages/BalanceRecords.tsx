@@ -1,7 +1,7 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { api } from '../services/api';
-import FormModal from '../components/Modal/FormModal';
+import Modal from '../components/Modal/Modal';
 import BalanceRecordForm from '../components/Forms/BalanceRecordForm';
 
 const BalanceRecordsContainer = styled.div`
@@ -11,14 +11,13 @@ const BalanceRecordsContainer = styled.div`
 const BalanceRecordsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  th,
-  td {
+  th, td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
   }
   th {
-    background-color: #4caf50;
+    background-color: #4CAF50;
     color: white;
   }
 `;
@@ -26,22 +25,21 @@ const BalanceRecordsTable = styled.table`
 const StyledButton = styled.button`
   margin-bottom: 20px;
   padding: 8px 16px;
-  background-color: #4caf50;
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-
+  
   &:hover {
     background-color: #45a049;
   }
 `;
 
-interface BalanceRecord {
-  id: number;
-  accountId: number;
+
+export interface BalanceRecord {
+  accountId: string;
   balance: number;
-  recordedAt: string;
 }
 
 const BalanceRecords: React.FC = () => {
@@ -49,22 +47,13 @@ const BalanceRecords: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
-    api
-      .getBalanceRecords()
-      .then((data) => {
-        setBalanceRecords(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching balance records:', error);
-        window.toaster?.error(
-          'Failed to fetch balance records. Please try again.',
-        );
-      });
+    api.getBalanceRecords().then((data) => {
+      setBalanceRecords(data);
+    }).catch((error) => {
+      console.error('Error fetching balance records:', error);
+      window.toaster?.error('Failed to fetch balance records. Please try again.');
+    });
   }, []);
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-  };
 
   return (
     <BalanceRecordsContainer>
@@ -73,16 +62,14 @@ const BalanceRecords: React.FC = () => {
         Add Balance Record
       </StyledButton>
 
-      <FormModal
+      <Modal
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         title="Add Balance Record"
-        onSubmit={handleSubmit}
       >
         <BalanceRecordForm
-          onSubmit={(data: any) => {
-            api
-              .createBalanceRecord(data)
+          onSubmit={(data) => {
+            api.createBalanceRecord(data)
               .then(() => {
                 setIsFormOpen(false);
                 window.toaster?.success('Balance record created successfully');
@@ -95,8 +82,7 @@ const BalanceRecords: React.FC = () => {
               });
           }}
         />
-      </FormModal>
-
+      </Modal>
       <BalanceRecordsTable>
         <thead>
           <tr>
