@@ -10,4 +10,4 @@ import { BalanceRecord } from './balance-records.entity';
   providers: [BalanceRecordsService],
   exports: [BalanceRecordsService],
 })
-export class BalanceRecordsModule {} 
+export class BalanceRecordsModule {}

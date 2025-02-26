@@ -40,7 +40,7 @@ const ToastWrapper = styled.div<{ type: string }>`
   justify-content: space-between;
   align-items: flex-start;
   animation: ${slideIn} 0.3s ease-out;
-  
+
   ${({ type }) => {
     switch (type) {
       case TOAST_TYPES.SUCCESS:
@@ -132,9 +132,7 @@ const Toast: React.FC<ToastProps> = ({ id, type, message, onClose }) => {
       <ToastContent>
         <ToastMessage>{message}</ToastMessage>
       </ToastContent>
-      <CloseButton onClick={() => onClose(id)}>
-        ×
-      </CloseButton>
+      <CloseButton onClick={() => onClose(id)}>×</CloseButton>
     </ToastWrapper>
   );
 };
@@ -186,4 +184,4 @@ const Toaster: React.FC = () => {
   );
 };
 
-export default Toaster; 
+export default Toaster;

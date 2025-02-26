@@ -1,6 +1,13 @@
 import { Account } from '../accounts/accounts.entity';
 import { Tag } from '../tags/tags.entity';
-import { Entity, Column, PrimaryGeneratedColumn, Unique, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Unique,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity('bank_transaction')
 @Unique(['date', 'sender', 'receiver', 'description', 'amount', 'currency'])
@@ -15,7 +22,7 @@ export class BankTransaction {
   description: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
-  amount: string;  //In TypeORM, when you use the decimal type for a column, the value is returned as a string by default.
+  amount: string; //In TypeORM, when you use the decimal type for a column, the value is returned as a string by default.
 
   @Column({ type: 'varchar', nullable: false, default: 'EUR' })
   currency: string;
@@ -29,7 +36,7 @@ export class BankTransaction {
   @Column({ nullable: true })
   tag: string;
 
-  @ManyToOne(() => Tag, tag => tag.transactions, { nullable: true })
+  @ManyToOne(() => Tag, (tag) => tag.transactions, { nullable: true })
   @JoinColumn({ name: 'tagId' })
   tagEntity: Tag;
 
@@ -39,7 +46,9 @@ export class BankTransaction {
   @Column({ nullable: true })
   accountId: string;
 
-  @ManyToOne(() => Account, account => account.transactions, { nullable: true })
+  @ManyToOne(() => Account, (account) => account.transactions, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'accountId' })
   account: Account;
-} 
+}

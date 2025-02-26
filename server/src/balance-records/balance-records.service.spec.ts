@@ -12,7 +12,7 @@ describe('BalanceRecordsService', () => {
     {
       id: '1',
       accountId: 'acc1',
-      balance: 100.50,
+      balance: 100.5,
       recordedAt: new Date(),
       account: { id: 'acc1', name: 'Test Account 1' },
     },
@@ -53,7 +53,9 @@ describe('BalanceRecordsService', () => {
     }).compile();
 
     service = module.get<BalanceRecordsService>(BalanceRecordsService);
-    repository = module.get<Repository<BalanceRecord>>(getRepositoryToken(BalanceRecord));
+    repository = module.get<Repository<BalanceRecord>>(
+      getRepositoryToken(BalanceRecord),
+    );
   });
 
   it('should be defined', () => {
@@ -63,9 +65,9 @@ describe('BalanceRecordsService', () => {
   describe('findAll', () => {
     it('should return all balance records', async () => {
       mockRepository.find.mockResolvedValue(mockBalanceRecords);
-      
+
       const result = await service.findAll();
-      
+
       expect(result).toEqual(mockBalanceRecords);
       expect(repository.find).toHaveBeenCalledWith({
         relations: ['account'],
@@ -74,10 +76,10 @@ describe('BalanceRecordsService', () => {
 
     it('should ensure all returned balances are numeric', async () => {
       mockRepository.find.mockResolvedValue(mockBalanceRecords);
-      
+
       const result = await service.findAll();
-      
-      result.forEach(record => {
+
+      result.forEach((record) => {
         expect(typeof record.balance).toBe('number');
         expect(isNaN(record.balance)).toBe(false);
       });
@@ -87,11 +89,13 @@ describe('BalanceRecordsService', () => {
   describe('findByAccountId', () => {
     it('should return balance records for a specific account', async () => {
       const accountId = 'acc1';
-      const filteredRecords = mockBalanceRecords.filter(record => record.accountId === accountId);
+      const filteredRecords = mockBalanceRecords.filter(
+        (record) => record.accountId === accountId,
+      );
       mockRepository.find.mockResolvedValue(filteredRecords);
-      
+
       const result = await service.findByAccountId(accountId);
-      
+
       expect(result).toEqual(filteredRecords);
       expect(repository.find).toHaveBeenCalledWith({
         where: { accountId },
@@ -102,12 +106,14 @@ describe('BalanceRecordsService', () => {
 
     it('should ensure all returned balances for an account are numeric', async () => {
       const accountId = 'acc1';
-      const filteredRecords = mockBalanceRecords.filter(record => record.accountId === accountId);
+      const filteredRecords = mockBalanceRecords.filter(
+        (record) => record.accountId === accountId,
+      );
       mockRepository.find.mockResolvedValue(filteredRecords);
-      
+
       const result = await service.findByAccountId(accountId);
-      
-      result.forEach(record => {
+
+      result.forEach((record) => {
         expect(typeof record.balance).toBe('number');
         expect(isNaN(record.balance)).toBe(false);
       });
@@ -117,11 +123,11 @@ describe('BalanceRecordsService', () => {
   describe('findOne', () => {
     it('should return a single balance record by id', async () => {
       const recordId = '1';
-      const record = mockBalanceRecords.find(r => r.id === recordId);
+      const record = mockBalanceRecords.find((r) => r.id === recordId);
       mockRepository.findOne.mockResolvedValue(record);
-      
+
       const result = await service.findOne(recordId);
-      
+
       expect(result).toEqual(record);
       expect(repository.findOne).toHaveBeenCalledWith({
         where: { id: recordId },
@@ -131,13 +137,13 @@ describe('BalanceRecordsService', () => {
 
     it('should ensure the returned balance is numeric', async () => {
       const recordId = '1';
-      const record = mockBalanceRecords.find(r => r.id === recordId);
+      const record = mockBalanceRecords.find((r) => r.id === recordId);
       mockRepository.findOne.mockResolvedValue(record);
-      
+
       const result = await service.findOne(recordId);
-      
+
       expect(typeof result.balance).toBe('number');
       expect(isNaN(result.balance)).toBe(false);
     });
   });
-}); 
+});

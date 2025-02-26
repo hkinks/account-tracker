@@ -28,7 +28,10 @@ export class AccountsService {
     return account;
   }
 
-  async update(id: string, updateAccountDto: UpdateAccountDto): Promise<Account> {
+  async update(
+    id: string,
+    updateAccountDto: UpdateAccountDto,
+  ): Promise<Account> {
     const account = await this.findOne(id);
     this.accountsRepository.merge(account, updateAccountDto);
     return this.accountsRepository.save(account);
@@ -40,4 +43,4 @@ export class AccountsService {
       throw new NotFoundException(`Account with ID ${id} not found`);
     }
   }
-} 
+}

@@ -11,22 +11,24 @@ describe('TransactionsController', () => {
       id: 1,
       date: new Date('2024-03-20'),
       description: 'Test transaction',
-      amount: 100.00,
+      amount: 100.0,
       currency: 'EUR',
       sender: 'John',
-      receiver: 'Jane'
-    }
+      receiver: 'Jane',
+    },
   ];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TransactionsController],
-      providers: [{
-        provide: TransactionsService,
-        useValue: {
-          getTransactions: jest.fn().mockResolvedValue(mockTransactions)
-        }
-      }],
+      providers: [
+        {
+          provide: TransactionsService,
+          useValue: {
+            getTransactions: jest.fn().mockResolvedValue(mockTransactions),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<TransactionsController>(TransactionsController);
@@ -41,7 +43,7 @@ describe('TransactionsController', () => {
 
   it('should return transactions with amount as float', async () => {
     const result = await controller.getTransactions();
-    result.forEach(transaction => {
+    result.forEach((transaction) => {
       expect(typeof transaction.amount).toBe('number');
     });
   });
@@ -57,10 +59,10 @@ describe('TransactionsController', () => {
       id: 2,
       date: new Date('2024-03-21'),
       description: 'New transaction',
-      amount: 200.00,
+      amount: 200.0,
       currency: 'EUR',
       sender: 'John',
-      receiver: 'Jane'
+      receiver: 'Jane',
     };
     const result = await controller.createTransaction(newTransaction);
     expect(result).toEqual(newTransaction);
@@ -72,21 +74,21 @@ describe('TransactionsController', () => {
       id: 1,
       date: new Date('2024-03-20'),
       description: 'Updated transaction',
-      amount: 150.00,
+      amount: 150.0,
       currency: 'EUR',
       sender: 'John',
-      receiver: 'Jane'
+      receiver: 'Jane',
     };
     const result = await controller.updateTransaction(1, updatedTransaction);
     expect(result).toEqual(updatedTransaction);
-    expect(service.updateTransaction).toHaveBeenCalledWith(1, updatedTransaction);
-
-
+    expect(service.updateTransaction).toHaveBeenCalledWith(
+      1,
+      updatedTransaction,
+    );
   });
 
   it('should delete a transaction', async () => {
     await controller.deleteTransaction(1);
     expect(service.deleteTransaction).toHaveBeenCalledWith(1);
   });
-  
 });

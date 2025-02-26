@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+} from 'typeorm';
 import { Account } from '../accounts/accounts.entity';
 
 @Entity('balance_record')
@@ -12,17 +20,17 @@ export class BalanceRecord {
     scale: 2,
     transformer: {
       to: (value: number) => value,
-      from: (value: string | number) => Number(value)
-    }
+      from: (value: string | number) => Number(value),
+    },
   })
   balance: number;
 
   @Column('timestamp with time zone')
   datetime: Date;
 
-  @ManyToOne(() => Account, account => account.balanceRecords)
+  @ManyToOne(() => Account, (account) => account.balanceRecords)
   account: Account;
 
   @Column()
   accountId: string;
-} 
+}

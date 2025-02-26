@@ -8,7 +8,7 @@ import { CreateTagDto, TagDto } from './tags.controller';
 export class TagsService {
   constructor(
     @InjectRepository(Tag)
-    private tagsRepository: Repository<Tag>
+    private tagsRepository: Repository<Tag>,
   ) {}
 
   async getTags(): Promise<Tag[]> {
@@ -40,4 +40,4 @@ export class TagsService {
       throw new NotFoundException(`Tag with ID ${id} not found`);
     }
   }
-} 
+}

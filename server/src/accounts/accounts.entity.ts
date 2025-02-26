@@ -28,12 +28,9 @@ export class Account {
   @Column({ nullable: false, default: 'EUR' })
   currency: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  lastUpdated: Date;
-
-  @OneToMany(() => BankTransaction, transaction => transaction.account)
+  @OneToMany(() => BankTransaction, (transaction) => transaction.account)
   transactions: BankTransaction[];
 
-  @OneToMany(() => BalanceRecord, balanceRecord => balanceRecord.account)
+  @OneToMany(() => BalanceRecord, (balanceRecord) => balanceRecord.account)
   balanceRecords: BalanceRecord[];
 }

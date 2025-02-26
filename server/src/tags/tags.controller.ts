@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { Tag } from './tags.entity';
 import { IsString, IsNotEmpty, MinLength } from 'class-validator';
@@ -29,10 +39,8 @@ export class TagDto {
 
 @Controller('tags')
 export class TagsController {
-  constructor(
-    private readonly tagsService: TagsService
-  ) {}
-  
+  constructor(private readonly tagsService: TagsService) {}
+
   @Get()
   async getTags(): Promise<TagDto[]> {
     return await this.tagsService.getTags();
@@ -51,7 +59,10 @@ export class TagsController {
   }
 
   @Put(':id')
-  async updateTag(@Param('id') id: number, @Body() tag: TagDto): Promise<TagDto> {
+  async updateTag(
+    @Param('id') id: number,
+    @Body() tag: TagDto,
+  ): Promise<TagDto> {
     return await this.tagsService.updateTag(id, tag);
   }
 
@@ -60,4 +71,4 @@ export class TagsController {
     console.log('Deleting tag with id:', id);
     await this.tagsService.deleteTag(id);
   }
-} 
+}

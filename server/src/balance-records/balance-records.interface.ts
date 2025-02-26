@@ -7,7 +7,7 @@ export class CreateBalanceRecordDto {
   @IsUUID()
   accountId: string;
 
-  @ApiProperty({ example: 1000.50 })
+  @ApiProperty({ example: 1000.5 })
   @IsNotEmpty()
   @IsNumber()
   balance: number;
@@ -18,7 +18,7 @@ export class CreateBalanceRecordDto {
   recordedAt: Date;
 }
 
-export class UpdateBalanceRecordDto extends CreateBalanceRecordDto {} 
+export class UpdateBalanceRecordDto extends CreateBalanceRecordDto {}
 
 export class BalanceRecordDto {
   @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
@@ -27,7 +27,7 @@ export class BalanceRecordDto {
   @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
   accountId: string;
 
-  @ApiProperty({ example: 1000.50 })
+  @ApiProperty({ example: 1000.5 })
   balance: number;
 
   @ApiProperty({ example: new Date() })
