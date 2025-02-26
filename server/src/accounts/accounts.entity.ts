@@ -13,6 +13,9 @@ export class Account {
   @Column({ nullable: true })
   description: string;
 
+  @Column({ nullable: true })
+  accountNumber: string;
+
   @Column({ default: 0 })
   balance: number;
 
@@ -21,6 +24,12 @@ export class Account {
 
   @Column({ nullable: true })
   accountType: string;
+
+  @Column({ nullable: false, default: 'EUR' })
+  currency: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  lastUpdated: Date;
 
   @OneToMany(() => BankTransaction, transaction => transaction.account)
   transactions: BankTransaction[];

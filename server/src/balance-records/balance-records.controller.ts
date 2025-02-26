@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { BalanceRecordsService } from './balance-records.service';
-import { CreateBalanceRecordDto, UpdateBalanceRecordDto } from './balance-records.interface';
+import { BalanceRecordDto, CreateBalanceRecordDto, UpdateBalanceRecordDto } from './balance-records.interface';
 import { BalanceRecord } from './balance-records.entity';
 
 @ApiTags('balance-records')
@@ -19,7 +19,7 @@ export class BalanceRecordsController {
   @Get()
   @ApiOperation({ summary: 'Get all balance records or filter by account' })
   @ApiResponse({ status: 200, description: 'Return all balance records.' })
-  findAll(@Query('accountId') accountId?: string): Promise<BalanceRecord[]> {
+  findAll(@Query('accountId') accountId?: string): Promise<BalanceRecordDto[]> {
     if (accountId) {
       return this.balanceRecordsService.findByAccountId(accountId);
     }
@@ -29,7 +29,7 @@ export class BalanceRecordsController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a balance record by id' })
   @ApiResponse({ status: 200, description: 'Return the balance record.' })
-  findOne(@Param('id') id: string): Promise<BalanceRecord> {
+  findOne(@Param('id') id: string): Promise<BalanceRecordDto> {
     return this.balanceRecordsService.findOne(id);
   }
 
