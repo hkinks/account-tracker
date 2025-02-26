@@ -37,7 +37,7 @@ export class BalanceRecordsService {
     return this.balanceRecordsRepository.find({
       where: { accountId },
       relations: ['account'],
-      order: { datetime: 'DESC' },
+      order: { recordedAt: 'DESC' },
     });
   }
 

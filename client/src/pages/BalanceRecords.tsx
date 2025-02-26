@@ -38,8 +38,21 @@ const StyledButton = styled.button`
 
 
 export interface BalanceRecord {
-  accountId: string;
+  id: string;
   balance: number;
+  recordedAt: Date;
+  account: Account;
+}
+
+export interface Account {
+  id: string;
+  name: string;
+  description: string;
+  accountNumber: string;
+  accountType: string;
+  balance: number;
+  isActive: boolean;
+  currency: string;
 }
 
 const BalanceRecords: React.FC = () => {
@@ -48,6 +61,7 @@ const BalanceRecords: React.FC = () => {
 
   useEffect(() => {
     api.getBalanceRecords().then((data) => {
+
       setBalanceRecords(data);
     }).catch((error) => {
       console.error('Error fetching balance records:', error);
@@ -86,7 +100,7 @@ const BalanceRecords: React.FC = () => {
       <BalanceRecordsTable>
         <thead>
           <tr>
-            <th>Account ID</th>
+            <th>Account</th>
             <th>Balance</th>
             <th>Recorded At</th>
           </tr>
@@ -94,9 +108,9 @@ const BalanceRecords: React.FC = () => {
         <tbody>
           {balanceRecords.map((record) => (
             <tr key={record.id}>
-              <td>{record.accountId}</td>
+              <td>{record.account.name}</td>
               <td>{record.balance.toFixed(2)}</td>
-              <td>{record.recordedAt}</td>
+              <td>{record.recordedAt.toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
