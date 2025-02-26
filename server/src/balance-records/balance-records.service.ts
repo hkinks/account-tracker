@@ -6,21 +6,42 @@ import {
   CreateBalanceRecordDto,
   UpdateBalanceRecordDto,
 } from './balance-records.interface';
+import { Account } from 'src/accounts/accounts.entity';
 
 @Injectable()
 export class BalanceRecordsService {
   constructor(
     @InjectRepository(BalanceRecord)
     private balanceRecordsRepository: Repository<BalanceRecord>,
+    @InjectRepository(Account)
+    private accountsRepository: Repository<Account>,
   ) {}
 
-  create(
+  async create(
     createBalanceRecordDto: CreateBalanceRecordDto,
   ): Promise<BalanceRecord> {
+    // Ensure accountId is present in the DTO
+    if (!createBalanceRecordDto.accountId) {
+      throw new Error('accountId is required to create a balance record');
+    }
+    
     const balanceRecord = this.balanceRecordsRepository.create(
       createBalanceRecordDto,
     );
-    return this.balanceRecordsRepository.save(balanceRecord);
+    await this.balanceRecordsRepository.save(balanceRecord);
+
+    // update the account balance also
+    const account = await this.accountsRepository.findOne({
+      where: { id: balanceRecord.accountId },
+    });
+    
+    if (!account) {
+      throw new Error(`Account with id ${balanceRecord.accountId} not found`);
+    }
+    account.balance = balanceRecord.balance;
+    await this.accountsRepository.save(account);
+
+    return balanceRecord;
   }
 
   async findAll(): Promise<BalanceRecord[]> {

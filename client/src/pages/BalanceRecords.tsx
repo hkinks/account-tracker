@@ -36,6 +36,12 @@ const StyledButton = styled.button`
   }
 `;
 
+export interface CreateBalanceRecordDto {
+  id: string;
+  accountId: string;
+  balance: number;
+  recordedAt: Date;
+}
 
 export interface BalanceRecord {
   id: string;
@@ -58,16 +64,48 @@ export interface Account {
 const BalanceRecords: React.FC = () => {
   const [balanceRecords, setBalanceRecords] = useState<BalanceRecord[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    api.getBalanceRecords().then((data) => {
-
+  const fetchBalanceRecords = async () => {
+    setIsLoading(true);
+    try {
+      const data = await api.getBalanceRecords();
       setBalanceRecords(data);
-    }).catch((error) => {
+    } catch (error) {
       console.error('Error fetching balance records:', error);
       window.toaster?.error('Failed to fetch balance records. Please try again.');
-    });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBalanceRecords();
   }, []);
+
+  const handleDeleteRecord = async (id: string) => {
+    try {
+      await api.deleteBalanceRecord(id);
+      window.toaster?.success('Balance record deleted successfully');
+      await fetchBalanceRecords();
+      setBalanceRecords(balanceRecords.filter((record) => record.id !== id));
+    } catch (error) {
+      console.error('Error deleting balance record:', error);
+      window.toaster?.error('Failed to delete balance record');
+    }
+  };
+
+  const handleCreateRecord = async (data: CreateBalanceRecordDto) => {
+    try {
+      await api.createBalanceRecord(data);
+      setIsFormOpen(false);
+      window.toaster?.success('Balance record created successfully');
+      await fetchBalanceRecords();
+    } catch (error) {
+      console.error('Error creating balance record:', error);
+      window.toaster?.error('Failed to create balance record');
+    }
+  };
 
   return (
     <BalanceRecordsContainer>
@@ -81,21 +119,7 @@ const BalanceRecords: React.FC = () => {
         onClose={() => setIsFormOpen(false)}
         title="Add Balance Record"
       >
-        <BalanceRecordForm
-          onSubmit={(data) => {
-            api.createBalanceRecord(data)
-              .then(() => {
-                setIsFormOpen(false);
-                window.toaster?.success('Balance record created successfully');
-                // Refresh the balance records list
-                api.getBalanceRecords().then(setBalanceRecords);
-              })
-              .catch((error: Error) => {
-                console.error('Error creating balance record:', error);
-                window.toaster?.error('Failed to create balance record');
-              });
-          }}
-        />
+        <BalanceRecordForm onSubmit={handleCreateRecord} />
       </Modal>
       <BalanceRecordsTable>
         <thead>
@@ -103,6 +127,7 @@ const BalanceRecords: React.FC = () => {
             <th>Account</th>
             <th>Balance</th>
             <th>Recorded At</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -111,6 +136,14 @@ const BalanceRecords: React.FC = () => {
               <td>{record.account.name}</td>
               <td>{record.balance.toFixed(2)}</td>
               <td>{record.recordedAt.toLocaleString()}</td>
+              <td>
+                <button
+                  onClick={() => handleDeleteRecord(record.id)}
+                  disabled={isLoading}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
