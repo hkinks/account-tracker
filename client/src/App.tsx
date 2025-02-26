@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Toaster from './components/Toaster';
 import Menu from './components/Menu';
 import Transactions from './pages/Transactions';
-import Main from './pages/Main';
+import Dashboard from './pages/Dashboard';
 import Accounts from './pages/Accounts';
 import BalanceRecords from './pages/BalanceRecords';
 import styled from 'styled-components';
@@ -29,7 +29,7 @@ function App() {
         <Menu />
         <ContentContainer>
           <Routes>
-            <Route path="/" element={<Main />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/balance-records" element={<BalanceRecords />} />
             <Route path="/accounts" element={<Accounts />} />
