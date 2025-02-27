@@ -40,22 +40,6 @@ export class StatsController {
     const activeAccounts = accounts.filter((acc) => acc.isActive).length;
     const totalBalanceRecords = balanceRecords.length;
 
-    // Calculate average balance per currency
-    const averageBalanceByCurrency = Object.entries(accountsByCurrency).reduce(
-      (acc, [currency, currencyAccounts]) => {
-        acc[currency] = currencyAccounts.length
-          ? Number(
-              (
-                currencyAccounts.reduce((sum, account) => sum + account.balance, 0) /
-                currencyAccounts.length
-              ).toFixed(2),
-            )
-          : 0;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
-
     return {
       totalBalanceByCurrency,
       totalAccounts,
@@ -65,7 +49,6 @@ export class StatsController {
         acc[account.accountType] = (acc[account.accountType] || 0) + 1;
         return acc;
       }, {} as Record<string, number>),
-      averageBalanceByCurrency,
     };
   }
 }
