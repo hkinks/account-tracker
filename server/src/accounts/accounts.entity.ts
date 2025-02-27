@@ -43,7 +43,7 @@ export class Account {
   @Column({ nullable: false, default: 'EUR' })
   currency: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: new Date() })
   lastUpdated: Date;
 
   @OneToMany(() => BankTransaction, (transaction) => transaction.account)

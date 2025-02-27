@@ -30,7 +30,7 @@ export class CreateAccountDto {
   @IsBoolean()
   isActive?: boolean;
 
-  @ApiProperty({ example: '2021-01-01', required: false })
+  @ApiProperty({ example: '2021-01-01', required: false, default: new Date().toISOString() })
   @IsOptional()
   @IsString()
   lastUpdated?: string;

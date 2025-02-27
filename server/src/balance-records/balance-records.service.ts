@@ -39,6 +39,7 @@ export class BalanceRecordsService {
       throw new Error(`Account with id ${balanceRecord.accountId} not found`);
     }
     account.balance = balanceRecord.balance;
+    account.lastUpdated = new Date(balanceRecord.recordedAt);
     await this.accountsRepository.save(account);
 
     return balanceRecord;
