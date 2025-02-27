@@ -17,7 +17,7 @@ import {
 } from './balance-records.interface';
 import { BalanceRecord } from './balance-records.entity';
 
-@ApiTags('balance-records')
+@ApiTags('Balance Records')
 @Controller('balance-records')
 export class BalanceRecordsController {
   constructor(private readonly balanceRecordsService: BalanceRecordsService) {}

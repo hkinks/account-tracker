@@ -9,6 +9,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { AccountsModule } from './accounts/accounts.module';
 import { BalanceRecordsModule } from './balance-records/balance-records.module';
 import { BalanceRecord } from './balance-records/balance-records.entity';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { BalanceRecord } from './balance-records/balance-records.entity';
     TagsModule,
     AccountsModule,
     BalanceRecordsModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
