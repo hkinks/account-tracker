@@ -1,37 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { api } from '../../services/api';
-import { Account, BalanceRecord, CreateBalanceRecordDto } from '../../pages/BalanceRecords';
-import Button from '../Button';
-
-// Styled components
-const FormGroup = styled.div`
-  margin-bottom: 15px;
-`;
-
-const Label = styled.label`
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-`;
-
-const Select = styled.select`
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-`;
+import { Account, CreateBalanceRecordDto } from '../../pages/BalanceRecords';
+import { GenericForm, FormField, SelectOption } from './GenericForm';
 
 interface BalanceRecordFormProps {
     onSubmit: (data: CreateBalanceRecordDto) => void;
-    accounts?: Array<{ id: number; name: string }>;
+    accounts?: Array<Account>;
     initialData?: Partial<CreateBalanceRecordDto>;
 }
 
@@ -41,26 +15,15 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
     accounts: propAccounts,
     initialData = {},
 }) => {
-    const [formData, setFormData] = useState<CreateBalanceRecordDto>({
+    const [accounts, setAccounts] = useState<Array<Account>>(propAccounts || []);
+    const [isLoading, setIsLoading] = useState<boolean>(propAccounts ? false : true);
+    const [error, setError] = useState<string | null>(null);
+    const [formInitialData, setFormInitialData] = useState<Partial<CreateBalanceRecordDto>>({
         id: initialData.id || crypto.randomUUID(),
         balance: initialData.balance || 0,
         recordedAt: initialData.recordedAt || new Date(),
         accountId: initialData.accountId || '',
     });
-    const [accounts, setAccounts] = useState<Account[]>(
-        (propAccounts || []).map(account => ({
-            ...account,
-            id: account.id.toString(),
-            balance: 0,
-            description: '',
-            accountNumber: '',
-            accountType: '',
-            isActive: true,
-            currency: 'EUR',
-        }))
-    );
-    const [, setIsLoading] = useState<boolean>(propAccounts ? false : true);
-    const [, setError] = useState<string | null>(null);
 
     useEffect(() => {
         // Only fetch accounts if they weren't provided as props
@@ -72,8 +35,8 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
                     setAccounts(data);
                     
                     // Auto-select the first account if none is selected and accounts exist
-                    if (!formData.accountId && data.length > 0) {
-                        setFormData(prev => ({
+                    if (!formInitialData.accountId && data.length > 0) {
+                        setFormInitialData(prev => ({
                             ...prev,
                             accountId: data[0].id.toString(),
                             balance: data[0].balance || 0,
@@ -91,107 +54,57 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
 
             fetchAccounts();
         }
-    }, [propAccounts, formData.accountId]);
+    }, [propAccounts, formInitialData.accountId]);
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        const { name, value } = e.target;
-        
-        // If changing the account, update the balance to match the selected account
-        if (name === 'accountId') {
-            const selectedAccount = accounts.find(account => account.id.toString() === value);
-            setFormData({
-                ...formData,
-                [name]: value,
-                balance: selectedAccount?.balance || 0,
-            });
-        } else {
-            setFormData({
-                ...formData,
-                [name]: value,
-            });
+    // Convert accounts to select options
+    const accountOptions: SelectOption[] = accounts.map(account => ({
+        value: account.id.toString(),
+        label: account.name
+    }));
+
+    // Define form fields
+    const fields: FormField[] = [
+        {
+            name: 'accountId',
+            label: 'Account:',
+            type: 'select',
+            required: true,
+            options: accountOptions
+        },
+        {
+            name: 'balance',
+            label: 'Balance:',
+            type: 'number',
+            required: true,
+            step: '0.01'
         }
-    };
+    ];
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleFormSubmit = (data: Record<string, any>) => {
+        const formData: CreateBalanceRecordDto = {
+            id: formInitialData.id || crypto.randomUUID(),
+            balance: data.balance,
+            recordedAt: formInitialData.recordedAt || new Date(),
+            accountId: data.accountId,
+        };
         onSubmit(formData);
     };
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <FormGroup>
-                <Label htmlFor="accountId">Account:</Label>
-                <Select
-                    id="accountId"
-                    name="accountId"
-                    value={formData.accountId}
-                    onChange={handleChange}
-                    required
-                >
-                    {accounts.map(account => (
-                        <option key={account.id} value={account.id}>
-                            {account.name}
-                        </option>
-                    ))}
-                </Select>
-            </FormGroup>
-            <FormGroup>
-                <Label htmlFor="balance">Balance:</Label>
-                <Input
-                    type="number"
-                    id="balance"
-                    name="balance"
-                    value={formData.balance}
-                    onChange={handleChange}
-                    step="0.01"
-                    required
-                />
-            </FormGroup>
-            <Button type="submit">Submit</Button>
-        </form>
-    );
-};
+    if (isLoading) {
+        return <div>Loading accounts...</div>;
+    }
 
-// Create a separate component for just the form fields
-export const BalanceRecordFields: React.FC<{
-    formData: BalanceRecord;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-    accounts?: Array<{ id: number; name: string }>;
-}> = ({ formData, onChange, accounts = [] }) => {
+    if (error) {
+        return <div>{error}</div>;
+    }
+
     return (
-        <>
-            <FormGroup>
-                <Label htmlFor="accountId">Account:</Label>
-                <Select
-                    id="accountId"
-                    name="accountId"
-                    value={formData.account.id}
-                    onChange={onChange}
-                    required
-                >
-                    <option value="">Select an account</option>
-                    {accounts.map(account => (
-                        <option key={account.id} value={account.id}>
-                            {account.name}
-                        </option>
-                    ))}
-                </Select>
-            </FormGroup>
-            <FormGroup>
-                <Label htmlFor="balance">Balance:</Label>
-                <Input
-                    type="number"
-                    id="balance"
-                    name="balance"
-                    value={formData.account.balance}
-                    onChange={onChange}
-                    step="0.01"
-                    required
-                />
-            </FormGroup>
-        </>
+        <GenericForm
+            fields={fields}
+            initialData={formInitialData}
+            onSubmit={handleFormSubmit}
+            submitButtonText="Submit"
+        />
     );
 };
 

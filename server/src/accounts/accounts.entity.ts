@@ -1,6 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, PrimaryColumn, JoinColumn } from 'typeorm';
 import { BankTransaction } from '../transactions/transactions.entity';
 import { BalanceRecord } from '../balance-records/balance-records.entity';
+
+export enum AccountType {
+  BANK = 'bank',
+  CRYPTO = 'crypto', 
+  STOCKS = 'stocks',
+  SAVINGS = 'savings',
+  CASH = 'cash',
+  OTHER = 'other'
+}
 
 @Entity('account')
 export class Account {
@@ -31,15 +40,23 @@ export class Account {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ nullable: true })
-  accountType: string;
-
   @Column({ nullable: false, default: 'EUR' })
   currency: string;
+
+  @Column({ nullable: true })
+  lastUpdated: Date;
 
   @OneToMany(() => BankTransaction, (transaction) => transaction.account)
   transactions: BankTransaction[];
 
   @OneToMany(() => BalanceRecord, (balanceRecord) => balanceRecord.account)
   balanceRecords: BalanceRecord[];
+
+  @Column({
+    type: 'enum',
+    enum: AccountType,
+    default: AccountType.BANK,
+    nullable: false
+  })
+  accountType: AccountType;
 }

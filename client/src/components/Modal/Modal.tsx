@@ -115,7 +115,7 @@ const Modal: React.FC<ModalProps> = ({
     <ModalBackdrop onClick={handleBackdropClick}>
       <ModalContainer>
         <ModalHeader>
-          <h2>{title}</h2>
+          <h3>{title}</h3>
           <CloseButton onClick={onClose}>×</CloseButton>
         </ModalHeader>
         <ModalBody>{children}</ModalBody>
