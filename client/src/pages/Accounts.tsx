@@ -4,7 +4,8 @@ import { api } from '../services/api';
 import Modal from '../components/Modal/Modal';
 import AccountForm from '../components/Forms/AccountForm';
 import Button from '../components/Button';
-import { Box } from '../components/Layout';
+import { Box, Flex } from '../components/Layout';
+import DeleteButton from '../components/DeleteButton';
 
 const AccountsContainer = styled.div`
   padding: 20px;
@@ -35,7 +36,7 @@ export enum AccountType {
 }
 
 export interface Account {
-  id: number;
+  id: string;
   name: string;
   accountType: AccountType;
   description: string;
@@ -55,6 +56,8 @@ export interface CreateAccountDto {
 const Accounts: React.FC = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
 
   useEffect(() => {
     fetchAccounts();
@@ -101,6 +104,32 @@ const Accounts: React.FC = () => {
       });
   };
 
+  const handleDeleteClick = (account: Account) => {
+    setAccountToDelete(account);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteConfirmOpen(false);
+    setAccountToDelete(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!accountToDelete) return;
+    
+    api.deleteAccount(accountToDelete.id.toString())
+      .then(() => {
+        window.toaster?.success('Account deleted successfully');
+        setIsDeleteConfirmOpen(false);
+        setAccountToDelete(null);
+        fetchAccounts();
+      })
+      .catch((error) => {
+        console.error('Error deleting account:', error);
+        window.toaster?.error('Failed to delete account. Please try again.');
+      });
+  };
+
   return (
     <AccountsContainer>
       <Box margin="0 0 20px 0">
@@ -112,7 +141,9 @@ const Accounts: React.FC = () => {
             <th>Name</th>
             <th>Balance</th>
             <th>Currency</th>
+            <th>Type</th>
             <th>Last Updated</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -121,7 +152,14 @@ const Accounts: React.FC = () => {
               <td>{account.name}</td>
               <td>{account.balance.toFixed(2)}</td>
               <td>{account.currency}</td>
+              <td>{account.accountType}</td>
               <td>{account.lastUpdated}</td>
+              <td>
+                <DeleteButton 
+                  onClick={() => handleDeleteClick(account)}
+                  title="Delete account"
+                />
+              </td>
             </tr>
           ))}
         </tbody>
@@ -135,6 +173,18 @@ const Accounts: React.FC = () => {
         <AccountForm
           onSubmit={handleCreateAccount}
         />
+      </Modal>
+
+      <Modal
+        isOpen={isDeleteConfirmOpen}
+        onClose={handleCancelDelete}
+        title="Confirm Delete"
+      >
+        <p>Are you sure you want to delete account "{accountToDelete?.name}"?</p>
+        <Flex margin="40px 20px 20px 40px" gap="2em" justify-content="start">
+          <Button onClick={handleConfirmDelete} variant="primary">Delete</Button>
+          <Button onClick={handleCancelDelete} variant="secondary">Cancel</Button>
+        </Flex>
       </Modal>
     </AccountsContainer>
   );

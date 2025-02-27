@@ -4,8 +4,8 @@ import { api } from '../services/api';
 import Modal from '../components/Modal/Modal';
 import BalanceRecordForm from '../components/Forms/BalanceRecordForm';
 import Button from '../components/Button';
-import { FaTrash } from 'react-icons/fa';
 import { Box } from '../components/Layout';
+import DeleteButton from '../components/DeleteButton';
 
 const BalanceRecordsContainer = styled.div`
   padding: 20px;
@@ -127,13 +127,10 @@ const BalanceRecords: React.FC = () => {
               <td>{record.balance.toFixed(2)}</td>
               <td>{record.recordedAt.toLocaleString()}</td>
               <td>
-                <Button
-                  variant="secondary"
-                  size="small"
+                <DeleteButton
                   onClick={() => handleDeleteRecord(record.id)}
                   disabled={isLoading}
                   title="Delete record"
-                  icon={<FaTrash />}
                 />
               </td>
             </tr>

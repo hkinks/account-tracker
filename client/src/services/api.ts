@@ -89,6 +89,17 @@ export const api = {
     return await response.json();
   },
 
+  async deleteAccount(id: string) {
+    const response = await fetch(`${API_BASE_URL}/accounts/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return;
+  },
+
   async getStats() {
     const response = await fetch(`${API_BASE_URL}/stats`);
     if (!response.ok) {
