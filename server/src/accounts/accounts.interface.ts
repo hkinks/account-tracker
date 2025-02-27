@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsBoolean,
 } from 'class-validator';
+import { AccountType } from './accounts.entity';
 
 export class CreateAccountDto {
   @ApiProperty({ example: 'Savings Account' })
@@ -29,10 +30,25 @@ export class CreateAccountDto {
   @IsBoolean()
   isActive?: boolean;
 
-  @ApiProperty({ example: 'savings', required: false })
+  @ApiProperty({ example: '2021-01-01', required: false })
   @IsOptional()
   @IsString()
-  accountType?: string;
+  lastUpdated?: string;
+
+  @ApiProperty({ example: 'EUR', required: false })
+  @IsOptional()
+  @IsString()
+  currency?: string;
+
+  @ApiProperty({ example: '1234567890', required: false })
+  @IsOptional()
+  @IsString()
+  accountNumber?: string;
+
+  @ApiProperty({ example: 'bank', required: false })
+  @IsOptional()
+  @IsString()
+  accountType?: AccountType;
 }
 
 export class UpdateAccountDto extends PartialType(CreateAccountDto) {}

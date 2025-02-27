@@ -34,6 +34,7 @@ export class AccountsService {
   ): Promise<Account> {
     const account = await this.findOne(id);
     this.accountsRepository.merge(account, updateAccountDto);
+    account.lastUpdated = new Date();
     return this.accountsRepository.save(account);
   }
 

@@ -25,9 +25,20 @@ const AccountsTable = styled.table`
   }
 `;
 
+export enum AccountType {
+  BANK = 'bank',
+  CRYPTO = 'crypto',
+  STOCKS = 'stocks',
+  SAVINGS = 'savings',
+  CASH = 'cash',
+  OTHER = 'other'
+}
+
 export interface Account {
   id: number;
   name: string;
+  accountType: AccountType;
+  description: string;
   balance: number;
   currency: string;
   lastUpdated: string;
@@ -77,7 +88,7 @@ const Accounts: React.FC = () => {
       type: formData.type,
       description: formData.description
     };
-    
+
     api.createAccount(accountData)
       .then(() => {
         window.toaster?.success('Account created successfully');
@@ -116,28 +127,14 @@ const Accounts: React.FC = () => {
         </tbody>
       </AccountsTable>
 
-      <Modal 
+      <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title="Create New Account"
-        footer={
-          <>
-            <CancelButton onClick={handleCloseModal}>Cancel</CancelButton>
-            <SubmitButton form="account-form" type="submit">Create Account</SubmitButton>
-          </>
-        }
       >
-        <form id="account-form" onSubmit={(e) => {
-          e.preventDefault();
-          const formElement = e.target as HTMLFormElement;
-          const formData = new FormData(formElement);
-          const accountFormData = Object.fromEntries(formData.entries());
-          handleCreateAccount(accountFormData);
-        }}>
-          <AccountForm 
-            onSubmit={handleCreateAccount}
-          />
-        </form>
+        <AccountForm
+          onSubmit={handleCreateAccount}
+        />
       </Modal>
     </AccountsContainer>
   );
