@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsNumber,
   IsBoolean,
+  IsEnum,
 } from 'class-validator';
 import { AccountType } from './accounts.entity';
 
@@ -45,9 +46,14 @@ export class CreateAccountDto {
   @IsString()
   accountNumber?: string;
 
-  @ApiProperty({ example: 'bank', required: false })
+  @ApiProperty({ 
+    example: 'bank', 
+    required: false, 
+    enum: AccountType,
+    enumName: 'AccountType'
+  })
   @IsOptional()
-  @IsString()
+  @IsEnum(AccountType)
   accountType?: AccountType;
 }
 

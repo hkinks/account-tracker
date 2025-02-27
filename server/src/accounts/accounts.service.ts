@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Account } from './accounts.entity';
+import { Account, AccountType } from './accounts.entity';
 import { CreateAccountDto, UpdateAccountDto } from './accounts.interface';
 
 @Injectable()
@@ -12,7 +12,23 @@ export class AccountsService {
   ) {}
 
   async create(createAccountDto: CreateAccountDto): Promise<Account> {
-    const account = this.accountsRepository.create(createAccountDto);
+    console.log('createAccountDto', createAccountDto);
+    console.log('accountType received:', createAccountDto.accountType);
+    
+    // Explicitly convert string to enum if needed
+    let accountType = createAccountDto.accountType;
+    if (typeof accountType === 'string') {
+      accountType = accountType as AccountType;
+    }
+    
+    const account = this.accountsRepository.create({
+      ...createAccountDto,
+      accountType: accountType || AccountType.BANK
+    });
+    
+    console.log('account to be saved:', account);
+    console.log('accountType to be saved:', account.accountType);
+    
     return this.accountsRepository.save(account);
   }
 
@@ -34,7 +50,9 @@ export class AccountsService {
   ): Promise<Account> {
     const account = await this.findOne(id);
     this.accountsRepository.merge(account, updateAccountDto);
-    account.lastUpdated = new Date(updateAccountDto.lastUpdated);
+    if (updateAccountDto.lastUpdated) {
+      account.lastUpdated = new Date(updateAccountDto.lastUpdated);
+    }
     return this.accountsRepository.save(account);
   }
 
