@@ -57,26 +57,47 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
     // If not enough data points, just clear the canvas and return
     if (balanceRecords.length < 2) return;
 
-    // Sort records by date
-    const sortedRecords = [...balanceRecords].sort(
-      (a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()
+    // Group records by account
+    const accountGroups = balanceRecords.reduce<Record<string, BalanceRecord[]>>((groups, record) => {
+      const accountId = record.account.id;
+      if (!groups[accountId]) {
+        groups[accountId] = [];
+      }
+      groups[accountId].push(record);
+      return groups;
+    }, {});
+    
+    // Generate colors for each account
+    const colors = [
+      '#3498db', // blue
+      '#e74c3c', // red
+      '#2ecc71', // green
+      '#f39c12', // orange
+      '#9b59b6', // purple
+      '#1abc9c', // turquoise
+      '#34495e', // dark blue
+      '#d35400', // dark orange
+    ];
+    
+    // Get all unique dates across all records
+    const allDates = [...new Set(balanceRecords.map(r => r.recordedAt))].sort(
+      (a, b) => new Date(a).getTime() - new Date(b).getTime()
     );
+    
+    const minDate = new Date(allDates[0]).getTime();
+    const maxDate = new Date(allDates[allDates.length - 1]).getTime();
 
     // Find min and max values for scaling
-    const minAmount = Math.min(...sortedRecords.map(record => record.balance));
-    const maxAmount = Math.max(...sortedRecords.map(record => record.balance));
+    const minAmount = Math.min(...balanceRecords.map(record => record.balance));
+    const maxAmount = Math.max(...balanceRecords.map(record => record.balance));
     
     // Add some padding to the min/max values
     const padding = (maxAmount - minAmount) * 0.1;
     const yMin = Math.max(0, minAmount - padding);
     const yMax = maxAmount + padding;
 
-    // Find min and max dates
-    const minDate = new Date(sortedRecords[0].recordedAt).getTime();
-    const maxDate = new Date(sortedRecords[sortedRecords.length - 1].recordedAt).getTime();
-
     // Set margins
-    const margin = { top: 40, right: 40, bottom: 60, left: 80 };
+    const margin = { top: 40, right: 120, bottom: 60, left: 80 };
     const graphWidth = canvas.width - margin.left - margin.right;
     const graphHeight = canvas.height - margin.top - margin.bottom;
 
@@ -114,11 +135,11 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
 
-    const xSteps = Math.min(sortedRecords.length, 6);
+    const xSteps = Math.min(allDates.length, 6);
     for (let i = 0; i < xSteps; i++) {
-      const index = Math.floor((i * (sortedRecords.length - 1)) / (xSteps - 1));
-      const record = sortedRecords[index];
-      const date = new Date(record.recordedAt);
+      const index = Math.floor((i * (allDates.length - 1)) / (xSteps - 1));
+      const dateStr = allDates[index];
+      const date = new Date(dateStr);
       const x = margin.left + (graphWidth * i) / (xSteps - 1);
       
       ctx.fillText(date.toLocaleDateString(), x, canvas.height - margin.bottom + 10);
@@ -137,44 +158,69 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
     ctx.translate(margin.left - 50, margin.top + graphHeight / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = 'center';
-    ctx.fillText(`Amount (${sortedRecords[0].account.currency})`, 0, 0);
+    ctx.fillText('Amount', 0, 0);
     ctx.restore();
 
-    // Draw the line graph
-    ctx.beginPath();
-    sortedRecords.forEach((record, index) => {
-      const x = margin.left + (graphWidth * (new Date(record.recordedAt).getTime() - minDate)) / (maxDate - minDate);
-      const y = margin.top + graphHeight - (graphHeight * (record.balance - yMin)) / (yMax - yMin);
+    // Draw lines for each account
+    Object.entries(accountGroups).forEach(([accountId, records], index) => {
+      const color = colors[index % colors.length];
+      const sortedRecords = [...records].sort(
+        (a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()
+      );
       
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    });
-    ctx.strokeStyle = '#3498db';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Draw data points
-    sortedRecords.forEach(record => {
-      const x = margin.left + (graphWidth * (new Date(record.recordedAt).getTime() - minDate)) / (maxDate - minDate);
-      const y = margin.top + graphHeight - (graphHeight * (record.balance - yMin)) / (yMax - yMin);
+      if (sortedRecords.length < 2) return;
       
+      // Draw the line graph
       ctx.beginPath();
-      ctx.arc(x, y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = '#3498db';
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
+      sortedRecords.forEach((record, i) => {
+        const x = margin.left + (graphWidth * (new Date(record.recordedAt).getTime() - minDate)) / (maxDate - minDate);
+        const y = margin.top + graphHeight - (graphHeight * (record.balance - yMin)) / (yMax - yMin);
+        
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
       ctx.stroke();
+
+      // Draw data points
+      sortedRecords.forEach(record => {
+        const x = margin.left + (graphWidth * (new Date(record.recordedAt).getTime() - minDate)) / (maxDate - minDate);
+        const y = margin.top + graphHeight - (graphHeight * (record.balance - yMin)) / (yMax - yMin);
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+      
+      // Add legend entry
+      const legendY = margin.top + (index * 25);
+      const accountName = sortedRecords[0].account.name;
+      const currency = sortedRecords[0].account.currency;
+      
+      // Draw color box
+      ctx.fillStyle = color;
+      ctx.fillRect(canvas.width - margin.right + 10, legendY, 15, 15);
+      
+      // Draw account name
+      ctx.fillStyle = '#333';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${accountName} (${currency})`, canvas.width - margin.right + 35, legendY + 7);
     });
 
     // Draw title
     ctx.font = 'bold 16px Arial';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#333';
-    ctx.fillText('Balance Timeline', canvas.width / 2, margin.top / 2);
+    ctx.fillText('Balance Timeline by Account', canvas.width / 2, margin.top / 2);
 
   }, [balanceRecords]);
 
