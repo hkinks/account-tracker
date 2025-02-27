@@ -16,7 +16,16 @@ export class Account {
   @Column({ nullable: true })
   accountNumber: string;
 
-  @Column({ default: 0 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string | number) => Number(value),
+    },
+  })
   balance: number;
 
   @Column({ default: true })
