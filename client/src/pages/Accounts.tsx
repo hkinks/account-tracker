@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { api } from '../services/api';
-import Modal, { CancelButton, SubmitButton } from '../components/Modal/Modal';
+import Modal from '../components/Modal/Modal';
 import AccountForm from '../components/Forms/AccountForm';
 import Button from '../components/Button';
 import { Box } from '../components/Layout';

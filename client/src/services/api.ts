@@ -1,14 +1,7 @@
-import { CreateBalanceRecordDto } from "../pages/BalanceRecords";
+import { CreateAccountDto } from "../pages/Accounts";
+import { Account, CreateBalanceRecordDto } from "../pages/BalanceRecords";
 
 const API_BASE_URL = 'http://localhost:3000/api/v1';
-
-interface CreateAccountDto {
-  name: string;
-  balance: number;
-  currency: string;
-  type: string;
-  description: string;
-}
 
 export const api = {
   async getTransactions() {
@@ -95,4 +88,13 @@ export const api = {
 
     return await response.json();
   },
+
+  async getStats() {
+    const response = await fetch(`${API_BASE_URL}/stats`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  },
 };
+
