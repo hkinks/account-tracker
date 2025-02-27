@@ -48,7 +48,7 @@ export interface CreateAccountDto {
   name: string;
   balance: number;
   currency: string;
-  type: string;
+  accountType: string;
   description: string;
 }
 
@@ -85,7 +85,7 @@ const Accounts: React.FC = () => {
       name: formData.name,
       balance: parseFloat(formData.balance as string),
       currency: formData.currency,
-      type: formData.type,
+      accountType: formData.accountType,
       description: formData.description
     };
 
