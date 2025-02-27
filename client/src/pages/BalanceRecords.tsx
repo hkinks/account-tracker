@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { api } from '../services/api';
 import Modal from '../components/Modal/Modal';
 import BalanceRecordForm from '../components/Forms/BalanceRecordForm';
+import Button from '../components/Button';
 import { FaTrash } from 'react-icons/fa';
+import { Box } from '../components/Layout';
 
 const BalanceRecordsContainer = styled.div`
   padding: 20px;
@@ -20,41 +22,6 @@ const BalanceRecordsTable = styled.table`
   th {
     background-color: #4CAF50;
     color: white;
-  }
-`;
-
-const StyledButton = styled.button`
-  margin-bottom: 20px;
-  padding: 8px 16px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  
-  &:hover {
-    background-color: #45a049;
-  }
-`;
-
-const DeleteButton = styled.button`
-  padding: 5px 10px;
-  background-color: #666666;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &:hover {
-    background-color: #555555;
-  }
-  
-  &:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
   }
 `;
 
@@ -131,10 +98,11 @@ const BalanceRecords: React.FC = () => {
 
   return (
     <BalanceRecordsContainer>
-      <h2>Balance Records</h2>
-      <StyledButton onClick={() => setIsFormOpen(true)}>
-        Add Balance Record
-      </StyledButton>
+      <Box margin="0 0 20px 0">
+        <Button onClick={() => setIsFormOpen(true)}>
+          Add Balance Record
+        </Button>
+      </Box>
 
       <Modal
         isOpen={isFormOpen}
@@ -159,13 +127,14 @@ const BalanceRecords: React.FC = () => {
               <td>{record.balance.toFixed(2)}</td>
               <td>{record.recordedAt.toLocaleString()}</td>
               <td>
-                <DeleteButton
+                <Button
+                  variant="secondary"
+                  size="small"
                   onClick={() => handleDeleteRecord(record.id)}
                   disabled={isLoading}
                   title="Delete record"
-                >
-                  <FaTrash />
-                </DeleteButton>
+                  icon={<FaTrash />}
+                />
               </td>
             </tr>
           ))}

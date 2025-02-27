@@ -55,7 +55,6 @@ const Transactions: React.FC = () => {
   // Render the transactions in a table
   return (
     <TransactionsContainer>
-      <h2>Transactions</h2>
       <TransactionsTable>
         <thead>
           <tr>

@@ -1,5 +1,4 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import './Forms.css';
 
 interface AccountFormData {
   name: string;

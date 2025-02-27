@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { api } from '../../services/api';
 import { Account, BalanceRecord, CreateBalanceRecordDto } from '../../pages/BalanceRecords';
+import Button from '../Button';
 
 // Styled components
 const FormGroup = styled.div`
@@ -26,19 +27,6 @@ const Select = styled.select`
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #ddd;
-`;
-
-const SubmitButton = styled.button`
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #45a049;
-  }
 `;
 
 interface BalanceRecordFormProps {
@@ -161,7 +149,7 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
                     required
                 />
             </FormGroup>
-            <SubmitButton type="submit">Submit</SubmitButton>
+            <Button type="submit">Submit</Button>
         </form>
     );
 };
