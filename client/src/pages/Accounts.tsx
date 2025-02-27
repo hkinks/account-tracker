@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-
-import { useState, useEffect } from 'react';
 import { api } from '../services/api';
+import Modal, { CancelButton, SubmitButton } from '../components/Modal/Modal';
+import AccountForm from '../components/Forms/AccountForm';
+import Button from '../components/Button';
+import { Box } from '../components/Layout';
 
 const AccountsContainer = styled.div`
   padding: 20px;
@@ -23,7 +25,7 @@ const AccountsTable = styled.table`
   }
 `;
 
-interface Account {
+export interface Account {
   id: number;
   name: string;
   balance: number;
@@ -31,10 +33,23 @@ interface Account {
   lastUpdated: string;
 }
 
+export interface CreateAccountDto {
+  name: string;
+  balance: number;
+  currency: string;
+  type: string;
+  description: string;
+}
+
 const Accounts: React.FC = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const fetchAccounts = () => {
     api
       .getAccounts()
       .then((data) => {
@@ -44,11 +59,42 @@ const Accounts: React.FC = () => {
         console.error('Error fetching accounts:', error);
         window.toaster?.error('Failed to fetch accounts. Please try again.');
       });
-  }, []);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCreateAccount = (formData: any) => {
+    const accountData = {
+      name: formData.name,
+      balance: parseFloat(formData.balance as string),
+      currency: formData.currency,
+      type: formData.type,
+      description: formData.description
+    };
+    
+    api.createAccount(accountData)
+      .then(() => {
+        window.toaster?.success('Account created successfully');
+        handleCloseModal();
+        fetchAccounts();
+      })
+      .catch((error) => {
+        console.error('Error creating account:', error);
+        window.toaster?.error('Failed to create account. Please try again.');
+      });
+  };
 
   return (
     <AccountsContainer>
-      <h2>Accounts</h2>
+      <Box margin="0 0 20px 0">
+        <Button onClick={handleOpenModal}>Add New Account</Button>
+      </Box>
       <AccountsTable>
         <thead>
           <tr>
@@ -69,6 +115,30 @@ const Accounts: React.FC = () => {
           ))}
         </tbody>
       </AccountsTable>
+
+      <Modal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title="Create New Account"
+        footer={
+          <>
+            <CancelButton onClick={handleCloseModal}>Cancel</CancelButton>
+            <SubmitButton form="account-form" type="submit">Create Account</SubmitButton>
+          </>
+        }
+      >
+        <form id="account-form" onSubmit={(e) => {
+          e.preventDefault();
+          const formElement = e.target as HTMLFormElement;
+          const formData = new FormData(formElement);
+          const accountFormData = Object.fromEntries(formData.entries());
+          handleCreateAccount(accountFormData);
+        }}>
+          <AccountForm 
+            onSubmit={handleCreateAccount}
+          />
+        </form>
+      </Modal>
     </AccountsContainer>
   );
 };
