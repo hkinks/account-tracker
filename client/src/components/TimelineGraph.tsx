@@ -19,6 +19,7 @@ const GraphContainer = styled.div`
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
 `;
 
 const Canvas = styled.canvas`
@@ -26,19 +27,35 @@ const Canvas = styled.canvas`
   height: 100%;
 `;
 
+const NoDataMessage = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+`;
+
 const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (!canvasRef.current || balanceRecords.length === 0) return;
-
+    if (!canvasRef.current) return;
+    
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
+    
     // Set canvas dimensions
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // If not enough data points, just clear the canvas and return
+    if (balanceRecords.length < 2) return;
 
     // Sort records by date
     const sortedRecords = [...balanceRecords].sort(
@@ -57,9 +74,6 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
     // Find min and max dates
     const minDate = new Date(sortedRecords[0].recordedAt).getTime();
     const maxDate = new Date(sortedRecords[sortedRecords.length - 1].recordedAt).getTime();
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Set margins
     const margin = { top: 40, right: 40, bottom: 60, left: 80 };
@@ -167,6 +181,12 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
   return (
     <GraphContainer>
       <Canvas ref={canvasRef} />
+      {balanceRecords.length < 2 && (
+        <NoDataMessage>
+          <p>Not enough data to display the timeline.</p>
+          <p>Please add at least two balance records.</p>
+        </NoDataMessage>
+      )}
     </GraphContainer>
   );
 };
