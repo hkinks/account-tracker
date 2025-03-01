@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>account-tracker</Name>
+  <Repository>https://github.com/hkinks/account-tracker.git</Repository>
+  <Registry></Registry>
+  <Network>bridge</Network>
+  <MyIP></MyIP>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support></Support>
+  <Project></Project>
+  <Overview>Account Tracker</Overview>
+  <Category>Productivity: Tools:</Category>
+  <WebUI>http://[IP]:[PORT:80]</WebUI>
+  <TemplateURL></TemplateURL>
+  <Icon></Icon>
+  <ExtraParams></ExtraParams>
+  <PostArgs></PostArgs>
+  <CPUset></CPUset>
+  <DateInstalled></DateInstalled>
+  <DonateText></DonateText>
+  <DonateLink></DonateLink>
+  <Description>Account Tracker</Description>
+  <Networking>
+    <Mode>bridge</Mode>
+    <Publish>
+      <Port>
+        <HostPort>80</HostPort>
+        <ContainerPort>80</ContainerPort>
+        <Protocol>tcp</Protocol>
+      </Port>
+    </Publish>
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/user/appdata/my-app/config</HostDir>
+      <ContainerDir>/etc/nginx/http.d</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+    <Volume>
+      <HostDir>/mnt/user/appdata/my-app/data</HostDir>
+      <ContainerDir>/app/data</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <Environment>
+    <Variable>
+      <Name>NODE_ENV</Name>
+      <Value>production</Value>
+    </Variable>
+    <Variable>
+      <Name>PORT</Name>
+      <Value>3000</Value>
+    </Variable>
+    <Variable>
+      <Name>TZ</Name>
+      <Value>Europe/London</Value>
+      <Description>Specify your timezone</Description>
+    </Variable>
+  </Environment>
+  <Labels/>
+  <Config Name="Web UI Port" Target="80" Default="80" Mode="tcp" Description="Web interface port" Type="Port" Display="always" Required="true" Mask="false">80</Config>
+  <Config Name="Nginx Config Directory" Target="/etc/nginx/http.d" Default="/mnt/user/appdata/my-app/config" Mode="rw" Description="Nginx configuration location" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/my-app/config</Config>
+  <Config Name="Data Directory" Target="/app/data" Default="/mnt/user/appdata/my-app/data" Mode="rw" Description="Application data location" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/my-app/data</Config>
+  <Config Name="Timezone" Target="TZ" Default="Europe/London" Mode="" Description="Specify your timezone" Type="Variable" Display="always" Required="false" Mask="false">Europe/London</Config>
+</Container> 
