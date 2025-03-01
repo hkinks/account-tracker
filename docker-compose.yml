@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  my-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./data:/app/data
+      - ./nginx.conf:/etc/nginx/http.d/default.conf
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - TZ=Europe/London
+    restart: unless-stopped 
