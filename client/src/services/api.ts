@@ -1,5 +1,5 @@
 import { CreateAccountDto } from "../pages/Accounts";
-import { Account, CreateBalanceRecordDto } from "../pages/BalanceRecords";
+import { CreateBalanceRecordDto } from "../pages/BalanceRecords";
 
 const API_BASE_URL = 'http://localhost:3000/api/v1';
 

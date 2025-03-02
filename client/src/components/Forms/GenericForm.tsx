@@ -102,7 +102,7 @@ export function GenericForm<T extends Record<string, any>>({
 
   // Render the appropriate field based on type
   const renderField = (field: FormField) => {
-    const { name, label, type, required, options, step, rows, placeholder } = field;
+    const { name, type, required, options, step, rows, placeholder } = field;
     
     switch (type) {
       case 'select':

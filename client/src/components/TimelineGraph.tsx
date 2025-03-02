@@ -162,7 +162,7 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
     ctx.restore();
 
     // Draw lines for each account
-    Object.entries(accountGroups).forEach(([accountId, records], index) => {
+    Object.entries(accountGroups).forEach(([, records], index) => {
       const color = colors[index % colors.length];
       const sortedRecords = [...records].sort(
         (a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()

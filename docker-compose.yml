@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   my-app:
     build:
@@ -8,7 +6,6 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./data:/app/data
       - ./nginx.conf:/etc/nginx/http.d/default.conf
     environment:
       - NODE_ENV=production
