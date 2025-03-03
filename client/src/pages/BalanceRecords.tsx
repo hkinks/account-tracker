@@ -26,7 +26,6 @@ const BalanceRecordsTable = styled.table`
 `;
 
 export interface CreateBalanceRecordDto {
-  id: string;
   accountId: string;
   balance: number;
   recordedAt: Date;

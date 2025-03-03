@@ -19,7 +19,6 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
     const [isLoading, setIsLoading] = useState<boolean>(propAccounts ? false : true);
     const [error, setError] = useState<string | null>(null);
     const [formInitialData, setFormInitialData] = useState<Partial<CreateBalanceRecordDto>>({
-        id: initialData.id || crypto.randomUUID(),
         balance: initialData.balance || 0,
         recordedAt: initialData.recordedAt || new Date(),
         accountId: initialData.accountId || '',
@@ -69,7 +68,16 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
             label: 'Account:',
             type: 'select',
             required: true,
-            options: accountOptions
+            options: accountOptions,
+            onChange: (value: string) => {
+                // Find the selected account
+                const selectedAccount = accounts.find(account => account.id.toString() === value);
+                // Update the balance if account is found
+                if (selectedAccount) {
+                    return { balance: selectedAccount.balance || 0 };
+                }
+                return {};
+            }
         },
         {
             name: 'balance',
@@ -82,7 +90,6 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
 
     const handleFormSubmit = (data: Record<string, any>) => {
         const formData: CreateBalanceRecordDto = {
-            id: formInitialData.id || crypto.randomUUID(),
             balance: data.balance,
             recordedAt: formInitialData.recordedAt || new Date(),
             accountId: data.accountId,

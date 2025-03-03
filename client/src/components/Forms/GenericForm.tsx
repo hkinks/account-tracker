@@ -59,6 +59,7 @@ export interface FormField {
   step?: string;
   rows?: number;
   placeholder?: string;
+  onChange?: (value: string) => Record<string, any> | void;
 }
 
 // Generic form props
@@ -92,7 +93,23 @@ export function GenericForm<T extends Record<string, any>>({
   ) => {
     const { name, value, type } = e.target;
     const processedValue = type === 'number' ? parseFloat(value) : value;
-    setFormData(prev => ({ ...prev, [name]: processedValue }));
+    
+    // Find the field definition to check for custom onChange handler
+    const fieldDef = fields.find(field => field.name === name);
+    
+    setFormData(prev => {
+      const updates = { ...prev, [name]: processedValue };
+      
+      // If this field has a custom onChange handler, apply additional updates
+      if (fieldDef?.onChange) {
+        const additionalUpdates = fieldDef.onChange(value);
+        if (additionalUpdates) {
+          return { ...updates, ...additionalUpdates };
+        }
+      }
+      
+      return updates;
+    });
   };
 
   const handleSubmit = (e: FormEvent) => {
