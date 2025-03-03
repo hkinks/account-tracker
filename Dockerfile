@@ -7,11 +7,12 @@ WORKDIR /app/client
 COPY client/package.json client/package-lock.json* client/tsconfig.json ./
 
 # Install client dependencies
-RUN npm ci
+RUN npm install
 
 # Copy client source code
 COPY client/src/ ./src/
 COPY client/public/ ./public/
+COPY client/index.html ./index.html
 
 # Build the client
 RUN npm run build
@@ -34,7 +35,7 @@ COPY server/src/ ./src/
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine
+FROM node:18-alpine as production-build
 
 # Install nginx
 RUN apk add --no-cache nginx
@@ -45,11 +46,11 @@ WORKDIR /app
 COPY server/package.json server/package-lock.json* ./
 RUN npm ci --production
 
-# Copy built server from build stage
-COPY --from=server-build /app/server/dist ./dist
+# Copy built server from build stage - make sure the paths are correct
+COPY --from=server-build /app/server/dist /app/dist
 
 # Copy built client files to nginx serve directory
-COPY --from=client-build /app/client/build /usr/share/nginx/html
+COPY --from=client-build /app/client/dist /usr/share/nginx/html
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/http.d/default.conf
@@ -61,8 +62,4 @@ ENV PORT=3000
 # Expose only nginx port
 EXPOSE 80
 
-# Start script to run both nginx and node server
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-CMD ["/start.sh"] 
+CMD ["/bin/sh", "-c", "node dist/main.js & nginx -g \"daemon off;\""]

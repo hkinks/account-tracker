@@ -1,5 +1,5 @@
 services:
-  my-app:
+  account-tracker:
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,4 +11,5 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - TZ=Europe/London
+      - DB_URL=${DB_URL}
     restart: unless-stopped 
