@@ -1,13 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import styled from 'styled-components';
-
-interface Account {
-  id: string;
-  name: string;
-  balance: number;
-  currency: string;
-}
+import { Account } from '../pages/Accounts';
 
 interface AccountPieChartProps {
   accounts: Account[];
@@ -19,7 +13,7 @@ const ChartContainer = styled.div`
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 500px;
+  max-width: 700px;
   height: 400px;
 `;
 
@@ -36,10 +30,10 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'
 const AccountPieChart: React.FC<AccountPieChartProps> = ({ accounts }) => {
   // Filter accounts with EUR currency and positive balance
   const eurAccounts = accounts
-    .filter(account => account.currency === 'EUR' && account.balance > 0)
+    .filter(account => account.eurValue && account.eurValue > 0)
     .map(account => ({
       name: account.name,
-      value: account.balance
+      value: account.eurValue
     }));
 
   return (
@@ -59,14 +53,19 @@ const AccountPieChart: React.FC<AccountPieChartProps> = ({ accounts }) => {
               nameKey="name"
               label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
             >
-              {eurAccounts.map((entry, index) => (
+              {eurAccounts.map((_entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
             <Tooltip 
-              formatter={(value) => [`€${value.toFixed(2)}`, 'Balance']}
+              formatter={(value: number) => [`€${value.toFixed(2)}`, 'Balance']}
             />
-            <Legend />
+            <Legend 
+              layout="vertical" 
+              verticalAlign="middle" 
+              align="left"
+              wrapperStyle={{ left: 0, top: 0, paddingLeft: '10px' }}
+            />
           </PieChart>
         </ResponsiveContainer>
       ) : (

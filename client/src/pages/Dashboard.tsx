@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import TimelineGraph from '../components/TimelineGraph';
 import AccountStats from '../components/AccountStats';
 import AccountPieChart from '../components/AccountPieChart';
+import AccountsSummary from '../components/AccountsSummary';
 import { api } from '../services/api';
 
 const MainContainer = styled.div`
@@ -16,12 +17,19 @@ const ChartsContainer = styled.div`
   margin-top: 20px;
 `;
 
+const ChartSection = styled.div`
+  display: flex;
+  gap: 20px;
+  width: 100%;
+`;
+
 const Dashboard: React.FC = () => {
   const [balanceRecords, setBalanceRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [accounts, setAccounts] = useState<any[]>([]);
+  const [totalEurValue, setTotalEurValue] = useState<number>(0);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -50,6 +58,10 @@ const Dashboard: React.FC = () => {
       try {
         const data = await api.getAccounts();
         setAccounts(data);
+        
+        // Calculate total EUR value
+        const total = data.reduce((sum: number, account: any) => sum + (account.eurValue || 0), 0);
+        setTotalEurValue(total);
       } catch (err) {
         console.error('Error fetching accounts:', err);
       }
@@ -62,15 +74,20 @@ const Dashboard: React.FC = () => {
 
   return (
     <MainContainer>
-      {stats && <AccountStats stats={stats} />}
       {loading && <p>Loading balance data...</p>}
       {error && <p>Error loading data: {error}</p>}
+      {accounts.length > 0 && (
+        <ChartSection>
+          <AccountPieChart accounts={accounts} />
+          <AccountsSummary totalEurValue={totalEurValue} accounts={accounts} />
+        </ChartSection>
+      )}
       {!loading && !error && (
         <ChartsContainer>
           <TimelineGraph balanceRecords={balanceRecords} />
-          {accounts.length > 0 && <AccountPieChart accounts={accounts} />}
         </ChartsContainer>
       )}
+      {stats && <AccountStats stats={stats} />}
     </MainContainer>
   );
 };
