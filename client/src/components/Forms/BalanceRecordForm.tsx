@@ -3,20 +3,35 @@ import { api } from '../../services/api';
 import { CreateBalanceRecordDto } from '../../pages/BalanceRecords';
 import { GenericForm, FormField, SelectOption } from './GenericForm';
 import { AccountDto } from '../../pages/Accounts';
+import styled from 'styled-components';
+
+// Add styled components for smooth transitions
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+`;
+
+// Modify the FormWrapper styled component
+const FormWrapper = styled('div')<{ $isVisible: boolean }>`
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  position: ${props => props.$isVisible ? 'relative' : 'absolute'};
+  transition: opacity 0.3s ease-in-out;
+  width: 100%;
+`;
 
 interface BalanceRecordFormProps {
     onSubmit: (data: CreateBalanceRecordDto) => void;
     accounts?: Array<AccountDto>;
     initialData?: Partial<CreateBalanceRecordDto>;
-    isSubmitting?: boolean;
 }
 
 // Main component
 const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
     onSubmit,
     accounts: propAccounts,
-    initialData = {},
-    isSubmitting = false,
+    initialData = {}
 }) => {
     const [accounts, setAccounts] = useState<Array<AccountDto>>(propAccounts || []);
     const [isLoading, setIsLoading] = useState<boolean>(propAccounts ? false : true);
@@ -36,22 +51,12 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
                     const data = await api.getAccounts();
                     setAccounts(data);
                     
-                    // If we have an accountId in initialData, find that account and use its balance
-                    if (initialData.accountId !== undefined && data.length > 0) {
-                        const selectedAccount = data.find((account: AccountDto) => account.id.toString() === initialData.accountId!.toString());
-                        if (selectedAccount) {
-                            setFormInitialData(prev => ({
-                                ...prev,
-                                balance: selectedAccount.balance || 0,
-                            }));
-                        }
-                    }
-                    // Otherwise auto-select the first account if accounts exist
-                    else if (data.length > 0) {
+                    // Auto-select the first account if none is selected and accounts exist
+                    if (!formInitialData.accountId && data.length > 0) {
                         setFormInitialData(prev => ({
                             ...prev,
                             accountId: data[0].id.toString(),
-                            balance: data[0].balance || 0,
+                            balance: data[0].balance || 0
                         }));
                     }
                     
@@ -66,7 +71,7 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
 
             fetchAccounts();
         }
-    }, [propAccounts, initialData.accountId]);
+    }, [propAccounts, formInitialData.accountId]);
 
     // Convert accounts to select options
     const accountOptions: SelectOption[] = accounts.map(account => ({
@@ -111,17 +116,27 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
     };
 
     return (
-        <>
-            {isLoading && <div>Loading accounts...</div>}
+        <div style={{ position: 'relative', minHeight: '200px' }}>
+            {/* Loading state */}
+            <FormWrapper $isVisible={isLoading}>
+                <LoadingContainer>
+                    <div>Loading accounts...</div>
+                </LoadingContainer>
+            </FormWrapper>
+
+            {/* Error state */}
             {error && <div>{error}</div>}
-            <GenericForm
-                fields={fields}
-                initialData={formInitialData}
-                onSubmit={handleFormSubmit}
-                submitButtonText="Submit"
-                isSubmitting={isLoading || isSubmitting}
-            />
-        </>
+
+            {/* Form state */}
+            <FormWrapper $isVisible={!isLoading}>
+                <GenericForm
+                    fields={fields}
+                    initialData={formInitialData}
+                    onSubmit={handleFormSubmit}
+                    submitButtonText="Submit"
+                />
+            </FormWrapper>
+        </div>
     );
 };
 

@@ -48,6 +48,7 @@ export class BalanceRecordsService {
   async findAll(): Promise<BalanceRecord[]> {
     return this.balanceRecordsRepository.find({
       relations: ['account'],
+      order: { recordedAt: 'DESC' },
     });
   }
 

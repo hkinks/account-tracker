@@ -68,7 +68,6 @@ export interface GenericFormProps<T> {
   initialData?: Partial<T>;
   onSubmit: (data: T) => void;
   submitButtonText?: string;
-  isSubmitting?: boolean;
 }
 
 // Generic form component
@@ -76,8 +75,7 @@ export function GenericForm<T extends Record<string, any>>({
   fields,
   initialData = {},
   onSubmit,
-  submitButtonText = 'Submit',
-  isSubmitting = false
+  submitButtonText = 'Submit'
 }: GenericFormProps<T>) {
   // Initialize form data from initialData or empty values
   const [formData, setFormData] = useState<T>(() => {
