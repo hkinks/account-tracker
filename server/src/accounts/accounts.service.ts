@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Account, AccountType } from './accounts.entity';
 import { AccountDto } from './accounts.interface';
 import { CryptoTickerService } from 'src/crypto/crypto-ticker.service';
+import { BalanceRecordsService } from 'src/balance-records/balance-records.service';
 
 @Injectable()
 export class AccountsService {
@@ -11,6 +12,7 @@ export class AccountsService {
     @InjectRepository(Account)
     private accountsRepository: Repository<Account>,
     private cryptoTickerService: CryptoTickerService,
+    private balanceRecordsService: BalanceRecordsService,
   ) {}
 
   async create(accountDto: AccountDto): Promise<Account> {
@@ -75,6 +77,14 @@ export class AccountsService {
     const account = await this.findOne(id);
     this.accountsRepository.merge(account, accountDto);
     account.lastUpdated = new Date(accountDto.lastUpdated || Date.now());
+
+    // Also create a separate balance record for the account
+    const balanceRecord = this.balanceRecordsService.create({
+      accountId: account.id,
+      balance: account.balance,
+      recordedAt: new Date(accountDto.lastUpdated || Date.now()),
+    });
+
     return this.accountsRepository.save(account);
   }
 
