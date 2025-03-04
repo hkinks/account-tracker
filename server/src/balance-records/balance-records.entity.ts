@@ -25,10 +25,19 @@ export class BalanceRecord {
   })
   balance: number;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true, default: null, 
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string | number) => Number(value),
+    }  
+  })
+  eurValue: number;
+
   @CreateDateColumn({ type: 'timestamp with time zone', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
   recordedAt: Date;
 
   @ManyToOne(() => Account, (account) => account.balanceRecords)
+  @JoinColumn({ name: 'accountId' })
   account: Account;
 
   @Column()

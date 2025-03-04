@@ -35,6 +35,7 @@ export interface CreateBalanceRecordDto {
 export interface BalanceRecord {
   id: string;
   balance: number;
+  eurValue?: number;
   recordedAt: Date;
   account: Account;
 }

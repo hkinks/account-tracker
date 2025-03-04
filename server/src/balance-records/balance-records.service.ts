@@ -23,7 +23,20 @@ export class BalanceRecordsService {
     if (!createBalanceRecordDto.accountId) {
       throw new Error('accountId is required to create a balance record');
     }
+
+    // if account is crypto, convert balance to EUR
+    const account = await this.accountsRepository.findOne({
+      where: { id: createBalanceRecordDto.accountId },
+    });
+
+    if (account.accountType === 'crypto') {
+      createBalanceRecordDto.balance = await this.currencyConverterService.convertCryptoToEur(
+        createBalanceRecordDto.balance,
+        account.currency
+      );
+    }
     
+    // create balance record
     const balanceRecord = this.balanceRecordsRepository.create(
       createBalanceRecordDto,
     );
@@ -33,46 +46,9 @@ export class BalanceRecordsService {
   }
 
   async findAll(): Promise<BalanceRecord[]> {
-    const balanceRecords = await this.balanceRecordsRepository.find({
+    return this.balanceRecordsRepository.find({
       relations: ['account'],
     });
-    return balanceRecords.map((record) => ({
-      ...record,
-      balance: Number(record.balance),
-    }));
-  }
-
-  async findAllWithEurValues(): Promise<BalanceRecordDto[]> {
-    const balanceRecords = await this.balanceRecordsRepository.find({
-      relations: ['account'],
-    });
-    
-    // Process records to add EUR values for crypto accounts
-    const processedRecords = await Promise.all(
-      balanceRecords.map(async (record) => {
-        const dto = new BalanceRecordDto();
-        dto.id = record.id;
-        dto.balance = Number(record.balance);
-        dto.recordedAt = record.recordedAt;
-        dto.account = record.account;
-        
-        // If this is a crypto account, add EUR value
-        if (record.account.accountType === 'crypto' && record.account.currency) {
-          try {
-            dto.eurValue = await this.currencyConverterService.convertCryptoToEur(
-              Number(record.balance),
-              record.account.currency
-            );
-          } catch (error) {
-            console.error(`Failed to convert ${record.account.currency} to EUR:`, error);
-          }
-        }
-        
-        return dto;
-      })
-    );
-    
-    return processedRecords;
   }
 
   findByAccountId(accountId: string): Promise<BalanceRecordDto[]> {

@@ -2,6 +2,7 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import styled from 'styled-components';
 import { Account } from '../pages/Accounts';
+import { DEFAULT_CURRENCY } from '../constants';
 
 interface AccountPieChartProps {
   accounts: Account[];
@@ -45,7 +46,7 @@ const AccountPieChart: React.FC<AccountPieChartProps> = ({ accounts }) => {
               ))}
             </Pie>
             <Tooltip 
-              formatter={(value: number) => [`€${value.toFixed(2)}`, 'Balance']}
+              formatter={(value: number) => [`${DEFAULT_CURRENCY}${value.toFixed(2)}`, 'Balance']}
             />
             <Legend 
               layout="vertical" 
@@ -56,7 +57,7 @@ const AccountPieChart: React.FC<AccountPieChartProps> = ({ accounts }) => {
           </PieChart>
         </ResponsiveContainer>
       ) : (
-        <p>No EUR accounts available to display</p>
+        <p>No {DEFAULT_CURRENCY} accounts available to display</p>
       )}
     </ChartContent>
   );
