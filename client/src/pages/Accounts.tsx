@@ -43,6 +43,7 @@ export interface Account {
   balance: number;
   currency: string;
   lastUpdated: string;
+  eurValue?: number;
 }
 
 export interface CreateAccountDto {
@@ -64,8 +65,7 @@ const Accounts: React.FC = () => {
   }, []);
 
   const fetchAccounts = () => {
-    api
-      .getAccounts()
+    api.getAccounts()
       .then((data) => {
         setAccounts(data);
       })
@@ -141,6 +141,7 @@ const Accounts: React.FC = () => {
             <th>Name</th>
             <th>Balance</th>
             <th>Currency</th>
+            <th>EUR Value</th>
             <th>Type</th>
             <th>Last Updated</th>
             <th>Actions</th>
@@ -152,6 +153,7 @@ const Accounts: React.FC = () => {
               <td>{account.name}</td>
               <td>{account.balance.toFixed(2)}</td>
               <td>{account.currency}</td>
+              <td>{account.eurValue?.toFixed(2)}{account.eurValue ? ' EUR' : ''}</td>
               <td>{account.accountType}</td>
               <td>{account.lastUpdated}</td>
               <td>

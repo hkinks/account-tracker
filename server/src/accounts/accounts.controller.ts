@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { Account } from './accounts.entity';
-import { CreateAccountDto, UpdateAccountDto } from './accounts.interface';
+import { AccountDTO, CreateAccountDto, UpdateAccountDto } from './accounts.interface';
 import { AccountsService } from './accounts.service';
 
 @Controller('accounts')
@@ -21,8 +21,8 @@ export class AccountsController {
   }
 
   @Get()
-  findAll(): Promise<Account[]> {
-    return this.accountsService.findAll();
+  findAll(): Promise<AccountDTO[]> {
+    return this.accountsService.findAllWithEurValues();
   }
 
   @Get(':id')

@@ -2,13 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account, AccountType } from './accounts.entity';
-import { CreateAccountDto, UpdateAccountDto } from './accounts.interface';
+import { AccountDTO, CreateAccountDto, UpdateAccountDto } from './accounts.interface';
+import { CryptoTickerService } from 'src/services/crypto/crypto-ticker.service';
 
 @Injectable()
 export class AccountsService {
   constructor(
     @InjectRepository(Account)
     private accountsRepository: Repository<Account>,
+    private cryptoTickerService: CryptoTickerService,
   ) {}
 
   async create(createAccountDto: CreateAccountDto): Promise<Account> {
@@ -34,6 +36,35 @@ export class AccountsService {
 
   async findAll(): Promise<Account[]> {
     return this.accountsRepository.find();
+  }
+
+  async findAllWithEurValues(): Promise<AccountDTO[]> {
+    const accounts = await this.findAll();
+    const accountDTOs: AccountDTO[] = [];
+
+    for (const account of accounts) {
+      let eurValue = account.balance;
+
+      // Handle crypto accounts
+      if (account.accountType === AccountType.CRYPTO && account.currency) {
+        const cryptoPrice = await this.cryptoTickerService.getCurrentPrice(account.currency + 'USDT');
+        console.log('cryptoPrice', cryptoPrice);
+        eurValue = account.balance * cryptoPrice.price;
+      }
+
+      accountDTOs.push({
+        id: account.id,
+        name: account.name,
+        balance: account.balance,
+        currency: account.currency,
+        eurValue: eurValue,
+        accountType: account.accountType,
+        description: account.description,
+        lastUpdated: account.lastUpdated?.toISOString()
+      });
+    }
+
+    return accountDTOs;
   }
 
   async findOne(id: string): Promise<Account> {

@@ -41,7 +41,7 @@ export class BalanceRecordsController {
     if (accountId) {
       return this.balanceRecordsService.findByAccountId(accountId);
     }
-    return this.balanceRecordsService.findAll();
+    return this.balanceRecordsService.findAllWithEurValues();
   }
 
   @Get(':id')

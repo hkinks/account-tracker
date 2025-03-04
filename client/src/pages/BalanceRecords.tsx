@@ -123,7 +123,7 @@ const BalanceRecords: React.FC = () => {
           {balanceRecords.map((record) => (
             <tr key={record.id}>
               <td>{record.account.name}</td>
-              <td>{record.balance.toFixed(2)}</td>
+              <td>{record.balance.toFixed(2)} {record.account.currency}</td>
               <td>{record.recordedAt.toLocaleString()}</td>
               <td>
                 <DeleteButton

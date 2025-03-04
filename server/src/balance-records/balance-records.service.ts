@@ -3,10 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BalanceRecord } from './balance-records.entity';
 import {
+  BalanceRecordDto,
   CreateBalanceRecordDto,
   UpdateBalanceRecordDto,
 } from './balance-records.interface';
 import { Account } from 'src/accounts/accounts.entity';
+import { CurrencyConverterService } from '../services/currency/currency-converter.service';
 
 @Injectable()
 export class BalanceRecordsService {
@@ -15,6 +17,7 @@ export class BalanceRecordsService {
     private balanceRecordsRepository: Repository<BalanceRecord>,
     @InjectRepository(Account)
     private accountsRepository: Repository<Account>,
+    private currencyConverterService: CurrencyConverterService,
   ) {}
 
   async create(
@@ -55,7 +58,41 @@ export class BalanceRecordsService {
     }));
   }
 
-  findByAccountId(accountId: string): Promise<BalanceRecord[]> {
+  async findAllWithEurValues(): Promise<BalanceRecordDto[]> {
+    const balanceRecords = await this.balanceRecordsRepository.find({
+      relations: ['account'],
+    });
+    
+    // Process records to add EUR values for crypto accounts
+    const processedRecords = await Promise.all(
+      balanceRecords.map(async (record) => {
+        const dto = new BalanceRecordDto();
+        dto.id = record.id;
+        dto.balance = Number(record.balance);
+        dto.recordedAt = record.recordedAt;
+        dto.accountId = record.accountId;
+        dto.account = record.account;
+        
+        // If this is a crypto account, add EUR value
+        if (record.account.accountType === 'crypto' && record.account.currency) {
+          try {
+            dto.eurValue = await this.currencyConverterService.convertCryptoToEur(
+              Number(record.balance),
+              record.account.currency
+            );
+          } catch (error) {
+            console.error(`Failed to convert ${record.account.currency} to EUR:`, error);
+          }
+        }
+        
+        return dto;
+      })
+    );
+    
+    return processedRecords;
+  }
+
+  findByAccountId(accountId: string): Promise<BalanceRecordDto[]> {
     return this.balanceRecordsRepository.find({
       where: { accountId },
       relations: ['account'],
@@ -63,7 +100,7 @@ export class BalanceRecordsService {
     });
   }
 
-  findOne(id: string): Promise<BalanceRecord> {
+  findOne(id: string): Promise<BalanceRecordDto> {
     return this.balanceRecordsRepository.findOne({
       where: { id },
       relations: ['account'],

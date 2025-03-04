@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8096:80"
     volumes:
       - ./nginx.conf:/etc/nginx/http.d/default.conf
     environment:
@@ -12,4 +12,5 @@ services:
       - PORT=3000
       - TZ=Europe/London
       - DB_URL=${DB_URL}
+      - BINANCE_API_URL=https://api.binance.com/api/v3
     restart: unless-stopped 

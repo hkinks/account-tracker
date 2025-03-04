@@ -10,6 +10,17 @@ import {
 } from 'class-validator';
 import { AccountType } from './accounts.entity';
 
+export interface AccountDTO {
+  id: string;
+  name: string;
+  balance: number;
+  currency: string;
+  eurValue?: number;
+  accountType: AccountType;
+  description?: string;
+  lastUpdated?: string;
+}
+
 export class CreateAccountDto {
   @ApiProperty({ example: 'Savings Account' })
   @IsNotEmpty()
