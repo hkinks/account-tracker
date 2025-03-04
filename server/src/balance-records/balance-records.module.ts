@@ -5,8 +5,8 @@ import { BalanceRecordsService } from './balance-records.service';
 import { BalanceRecordsController } from './balance-records.controller';
 import { BalanceRecord } from './balance-records.entity';
 import { Account } from 'src/accounts/accounts.entity';
-import { CurrencyConverterService } from '../services/currency/currency-converter.service';
-import { CryptoTickerService } from '../services/crypto/crypto-ticker.service';
+import { CurrencyConverterService } from '../currency/currency-converter.service';
+import { CryptoTickerService } from '../crypto/crypto-ticker.service';
 
 @Module({
   imports: [

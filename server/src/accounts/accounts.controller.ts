@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { Account } from './accounts.entity';
-import { AccountDTO, CreateAccountDto, UpdateAccountDto } from './accounts.interface';
+import { AccountDto } from './accounts.interface';
 import { AccountsService } from './accounts.service';
 
 @Controller('accounts')
@@ -16,12 +16,12 @@ export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Post()
-  create(@Body() createAccountDto: CreateAccountDto): Promise<Account> {
-    return this.accountsService.create(createAccountDto);
+  create(@Body() accountDto: AccountDto): Promise<Account> {
+    return this.accountsService.create(accountDto);
   }
 
   @Get()
-  findAll(): Promise<AccountDTO[]> {
+  findAll(): Promise<AccountDto[]> {
     return this.accountsService.findAllWithEurValues();
   }
 
@@ -33,9 +33,9 @@ export class AccountsController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateAccountDto: UpdateAccountDto,
+    @Body() accountDto: AccountDto,
   ): Promise<Account> {
-    return this.accountsService.update(id, updateAccountDto);
+    return this.accountsService.update(id, accountDto);
   }
 
   @Delete(':id')

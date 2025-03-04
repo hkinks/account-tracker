@@ -1,4 +1,3 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
@@ -10,18 +9,13 @@ import {
 } from 'class-validator';
 import { AccountType } from './accounts.entity';
 
-export interface AccountDTO {
-  id: string;
-  name: string;
-  balance: number;
-  currency: string;
-  eurValue?: number;
-  accountType: AccountType;
-  description?: string;
-  lastUpdated?: string;
-}
+// Base class that will be used for all account-related DTOs
+export class AccountDto {
+  @ApiProperty({ example: 'abc123', required: false })
+  @IsOptional()
+  @IsString()
+  id?: string;
 
-export class CreateAccountDto {
   @ApiProperty({ example: 'Savings Account' })
   @IsNotEmpty()
   @IsString()
@@ -37,25 +31,15 @@ export class CreateAccountDto {
   @IsNumber()
   balance?: number;
 
-  @ApiProperty({ example: true, required: false })
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
-
-  @ApiProperty({ example: '2021-01-01', required: false, default: new Date().toISOString() })
-  @IsOptional()
-  @IsString()
-  lastUpdated?: string;
-
   @ApiProperty({ example: 'EUR', required: false })
   @IsOptional()
   @IsString()
   currency?: string;
 
-  @ApiProperty({ example: '1234567890', required: false })
+  @ApiProperty({ example: 1050.75, required: false })
   @IsOptional()
-  @IsString()
-  accountNumber?: string;
+  @IsNumber()
+  eurValue?: number;
 
   @ApiProperty({ 
     example: 'bank', 
@@ -66,6 +50,19 @@ export class CreateAccountDto {
   @IsOptional()
   @IsEnum(AccountType)
   accountType?: AccountType;
-}
 
-export class UpdateAccountDto extends PartialType(CreateAccountDto) {}
+  @ApiProperty({ example: true, required: false })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @ApiProperty({ example: '2021-01-01', required: false, default: new Date().toISOString() })
+  @IsOptional()
+  @IsString()
+  lastUpdated?: string;
+
+  @ApiProperty({ example: '1234567890', required: false })
+  @IsOptional()
+  @IsString()
+  accountNumber?: string;
+}

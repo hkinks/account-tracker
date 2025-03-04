@@ -89,6 +89,24 @@ export const api = {
     return await response.json();
   },
 
+  async updateAccount(id: string, data: CreateAccountDto) {
+    const response = await fetch(`${API_BASE_URL}/accounts/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to update account: ${response.statusText}`,
+      );
+    }
+
+    return await response.json();
+  },
+
   async deleteAccount(id: string) {
     const response = await fetch(`${API_BASE_URL}/accounts/${id}`, {
       method: 'DELETE',

@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account, AccountType } from './accounts.entity';
-import { AccountDTO, CreateAccountDto, UpdateAccountDto } from './accounts.interface';
-import { CryptoTickerService } from 'src/services/crypto/crypto-ticker.service';
+import { AccountDto } from './accounts.interface';
+import { CryptoTickerService } from 'src/crypto/crypto-ticker.service';
 
 @Injectable()
 export class AccountsService {
@@ -13,23 +13,17 @@ export class AccountsService {
     private cryptoTickerService: CryptoTickerService,
   ) {}
 
-  async create(createAccountDto: CreateAccountDto): Promise<Account> {
-    console.log('createAccountDto', createAccountDto);
-    console.log('accountType received:', createAccountDto.accountType);
-    
+  async create(accountDto: AccountDto): Promise<Account> {
     // Explicitly convert string to enum if needed
-    let accountType = createAccountDto.accountType;
+    let accountType = accountDto.accountType;
     if (typeof accountType === 'string') {
       accountType = accountType as AccountType;
     }
     
     const account = this.accountsRepository.create({
-      ...createAccountDto,
+      ...accountDto,
       accountType: accountType || AccountType.BANK
     });
-    
-    console.log('account to be saved:', account);
-    console.log('accountType to be saved:', account.accountType);
     
     return this.accountsRepository.save(account);
   }
@@ -38,9 +32,9 @@ export class AccountsService {
     return this.accountsRepository.find();
   }
 
-  async findAllWithEurValues(): Promise<AccountDTO[]> {
+  async findAllWithEurValues(): Promise<AccountDto[]> {
     const accounts = await this.findAll();
-    const accountDTOs: AccountDTO[] = [];
+    const accountDTOs: AccountDto[] = [];
 
     for (const account of accounts) {
       let eurValue = account.balance;
@@ -48,7 +42,6 @@ export class AccountsService {
       // Handle crypto accounts
       if (account.accountType === AccountType.CRYPTO && account.currency) {
         const cryptoPrice = await this.cryptoTickerService.getCurrentPrice(account.currency + 'USDT');
-        console.log('cryptoPrice', cryptoPrice);
         eurValue = account.balance * cryptoPrice.price;
       }
 
@@ -77,13 +70,11 @@ export class AccountsService {
 
   async update(
     id: string,
-    updateAccountDto: UpdateAccountDto,
+    accountDto: AccountDto,
   ): Promise<Account> {
     const account = await this.findOne(id);
-    this.accountsRepository.merge(account, updateAccountDto);
-    if (updateAccountDto.lastUpdated) {
-      account.lastUpdated = new Date(updateAccountDto.lastUpdated);
-    }
+    this.accountsRepository.merge(account, accountDto);
+    account.lastUpdated = new Date(accountDto.lastUpdated || Date.now());
     return this.accountsRepository.save(account);
   }
 

@@ -10,8 +10,8 @@ import { AccountsModule } from './accounts/accounts.module';
 import { BalanceRecordsModule } from './balance-records/balance-records.module';
 import { BalanceRecord } from './balance-records/balance-records.entity';
 import { StatsModule } from './stats/stats.module';
-import { CryptoTickerService } from './services/crypto/crypto-ticker.service';
-import { CurrencyConverterService } from './services/currency/currency-converter.service';
+import { CryptoTickerService } from './crypto/crypto-ticker.service';
+import { CurrencyConverterService } from './currency/currency-converter.service';
 
 @Module({
   imports: [

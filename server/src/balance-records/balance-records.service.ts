@@ -8,7 +8,7 @@ import {
   UpdateBalanceRecordDto,
 } from './balance-records.interface';
 import { Account } from 'src/accounts/accounts.entity';
-import { CurrencyConverterService } from '../services/currency/currency-converter.service';
+import { CurrencyConverterService } from '../currency/currency-converter.service';
 
 @Injectable()
 export class BalanceRecordsService {

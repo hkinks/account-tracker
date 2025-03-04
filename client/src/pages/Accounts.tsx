@@ -6,6 +6,7 @@ import AccountForm from '../components/Forms/AccountForm';
 import Button from '../components/Button';
 import { Box, Flex } from '../components/Layout';
 import DeleteButton from '../components/DeleteButton';
+import EditButton from '../components/EditButton';
 
 const AccountsContainer = styled.div`
   padding: 20px;
@@ -59,6 +60,7 @@ const Accounts: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
+  const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 
   useEffect(() => {
     fetchAccounts();
@@ -75,12 +77,18 @@ const Accounts: React.FC = () => {
       });
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (account?: Account) => {
+    if (account) {
+      setEditingAccount(account);
+    } else {
+      setEditingAccount(null);
+    }
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setEditingAccount(null);
   };
 
   const handleCreateAccount = (formData: any) => {
@@ -92,16 +100,29 @@ const Accounts: React.FC = () => {
       description: formData.description
     };
 
-    api.createAccount(accountData)
-      .then(() => {
-        window.toaster?.success('Account created successfully');
-        handleCloseModal();
-        fetchAccounts();
-      })
-      .catch((error) => {
-        console.error('Error creating account:', error);
-        window.toaster?.error('Failed to create account. Please try again.');
-      });
+    if (editingAccount) {
+      api.updateAccount(editingAccount.id.toString(), accountData)
+        .then(() => {
+          window.toaster?.success('Account updated successfully');
+          handleCloseModal();
+          fetchAccounts();
+        })
+        .catch((error) => {
+          console.error('Error updating account:', error);
+          window.toaster?.error('Failed to update account. Please try again.');
+        });
+    } else {
+      api.createAccount(accountData)
+        .then(() => {
+          window.toaster?.success('Account created successfully');
+          handleCloseModal();
+          fetchAccounts();
+        })
+        .catch((error) => {
+          console.error('Error creating account:', error);
+          window.toaster?.error('Failed to create account. Please try again.');
+        });
+    }
   };
 
   const handleDeleteClick = (account: Account) => {
@@ -137,7 +158,7 @@ const Accounts: React.FC = () => {
       </Box>
       
       <Box margin="0 0 20px 0">
-        <Button onClick={handleOpenModal}>Add New Account</Button>
+        <Button onClick={() => handleOpenModal()}>Add New Account</Button>
       </Box>
       <AccountsTable>
         <thead>
@@ -161,10 +182,16 @@ const Accounts: React.FC = () => {
               <td>{account.accountType}</td>
               <td>{account.lastUpdated}</td>
               <td>
-                <DeleteButton 
-                  onClick={() => handleDeleteClick(account)}
-                  title="Delete account"
-                />
+                <Flex gap="0.5em">
+                  <EditButton 
+                    onClick={() => handleOpenModal(account)}
+                    title="Edit account"
+                  />
+                  <DeleteButton 
+                    onClick={() => handleDeleteClick(account)}
+                    title="Delete account"
+                  />
+                </Flex>
               </td>
             </tr>
           ))}
@@ -174,10 +201,11 @@ const Accounts: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title="Create New Account"
+        title={editingAccount ? "Edit Account" : "Create New Account"}
       >
         <AccountForm
           onSubmit={handleCreateAccount}
+          initialData={editingAccount || undefined}
         />
       </Modal>
 
