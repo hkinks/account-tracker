@@ -6,6 +6,7 @@ import { DEFAULT_CURRENCY } from '../constants';
 
 interface TimelineGraphProps {
   balanceRecords: BalanceRecord[];
+  cumulative?: boolean;
 }
 
 const GraphContent = styled.div`
@@ -26,7 +27,7 @@ const NoDataMessage = styled.div`
 // Array of colors for the line chart
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#A4DE6C'];
 
-const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
+const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords, cumulative = false }) => {
   // If not enough data points, show message
   if (balanceRecords.length < 2) {
     return (
@@ -56,16 +57,31 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
 
   // Create data structure for Recharts
   const chartData = allDates.map(date => {
-    const dataPoint: any = { date: new Date(date).toLocaleDateString() };
+    const dateObj = new Date(date);
+    // Format as MM.YYYY (month and year only)
+    const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}.${dateObj.getFullYear()}`;
+    
+    const dataPoint: any = { date: formattedDate };
+    let runningTotal = 0;
     
     Object.entries(accountGroups).forEach(([accountId, records]) => {
       const record = records.find(r => r.recordedAt === date);
       if (record) {
         const accountKey = `${record.account.name} (${DEFAULT_CURRENCY})`;
-        dataPoint[accountKey] = record.eurValue || record.balance;
-        dataPoint[`${accountKey}-id`] = accountId; // Store ID for reference
+        const value = record.eurValue || record.balance;
+        
+        dataPoint[accountKey] = value;
+        dataPoint[`${accountKey}-id`] = accountId;
+        
+        if (cumulative) {
+          runningTotal += value;
+        }
       }
     });
+    
+    if (cumulative && Object.keys(dataPoint).length > 1) {
+      dataPoint[`Total (${DEFAULT_CURRENCY})`] = runningTotal;
+    }
     
     return dataPoint;
   });
@@ -75,6 +91,11 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
     const record = records[0];
     return `${record.account.name} (${DEFAULT_CURRENCY})`;
   });
+
+  // Add total line for cumulative mode
+  const linesToDisplay = cumulative 
+    ? [...accountNames, `Total (${DEFAULT_CURRENCY})`]
+    : accountNames;
 
   return (
     <GraphContent>
@@ -88,15 +109,16 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
           <YAxis />
           <Tooltip formatter={(value: number) => [`${value.toFixed(2)}`, 'Balance']} />
           <Legend />
-          {accountNames.map((accountName, index) => (
+          {linesToDisplay.map((name, index) => (
             <Line
-              key={accountName}
+              key={name}
               type="monotone"
-              dataKey={accountName}
-              stroke={COLORS[index % COLORS.length]}
+              dataKey={name}
+              stroke={name === `Total (${DEFAULT_CURRENCY})` ? '#FF0000' : COLORS[index % COLORS.length]}
               activeDot={{ r: 8 }}
-              strokeWidth={2}
+              strokeWidth={name === `Total (${DEFAULT_CURRENCY})` ? 3 : 2}
               connectNulls
+              dot={name === `Total (${DEFAULT_CURRENCY})` ? { strokeWidth: 2 } : undefined}
             />
           ))}
         </LineChart>
