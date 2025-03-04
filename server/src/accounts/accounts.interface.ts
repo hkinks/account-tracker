@@ -14,12 +14,12 @@ export class AccountDto {
   @ApiProperty({ example: 'abc123', required: false })
   @IsOptional()
   @IsString()
-  id?: string;
+  id: string;
 
   @ApiProperty({ example: 'Savings Account' })
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name?: string;
 
   @ApiProperty({ example: 'My primary savings account', required: false })
   @IsOptional()

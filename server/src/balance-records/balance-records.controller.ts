@@ -16,11 +16,15 @@ import {
   UpdateBalanceRecordDto,
 } from './balance-records.interface';
 import { BalanceRecord } from './balance-records.entity';
+import { AccountsService } from 'src/accounts/accounts.service';
 
 @ApiTags('Balance Records')
 @Controller('balance-records')
 export class BalanceRecordsController {
-  constructor(private readonly balanceRecordsService: BalanceRecordsService) {}
+  constructor(
+    private readonly balanceRecordsService: BalanceRecordsService,
+    private readonly accountsService: AccountsService,
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new balance record' })
@@ -31,7 +35,13 @@ export class BalanceRecordsController {
   create(
     @Body() createBalanceRecordDto: CreateBalanceRecordDto,
   ): Promise<BalanceRecord> {
-    return this.balanceRecordsService.create(createBalanceRecordDto);
+    const balanceRecord = this.balanceRecordsService.create(createBalanceRecordDto);
+    this.accountsService.update(createBalanceRecordDto.accountId, {
+      balance: createBalanceRecordDto.balance,
+      id: createBalanceRecordDto.accountId,
+    });
+
+    return balanceRecord;
   }
 
   @Get()
@@ -41,7 +51,7 @@ export class BalanceRecordsController {
     if (accountId) {
       return this.balanceRecordsService.findByAccountId(accountId);
     }
-    return this.balanceRecordsService.findAllWithEurValues();
+    return this.balanceRecordsService.findAll();
   }
 
   @Get(':id')

@@ -1,12 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { Account } from '../pages/BalanceRecords';
-
-interface BalanceRecord {
-  balance: number;
-  recordedAt: string;
-  account: Account;
-}
+import { BalanceRecord } from '../pages/BalanceRecords';
 
 interface TimelineGraphProps {
   balanceRecords: BalanceRecord[];

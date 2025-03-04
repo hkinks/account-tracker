@@ -7,6 +7,7 @@ import { BalanceRecord } from './balance-records.entity';
 import { Account } from 'src/accounts/accounts.entity';
 import { CurrencyConverterService } from '../currency/currency-converter.service';
 import { CryptoTickerService } from '../crypto/crypto-ticker.service';
+import { AccountsService } from 'src/accounts/accounts.service';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { CryptoTickerService } from '../crypto/crypto-ticker.service';
     ConfigModule
   ],
   controllers: [BalanceRecordsController],
-  providers: [BalanceRecordsService, CurrencyConverterService, CryptoTickerService],
+  providers: [BalanceRecordsService, CurrencyConverterService, CryptoTickerService, AccountsService],
   exports: [BalanceRecordsService],
 })
 export class BalanceRecordsModule {}

@@ -33,18 +33,6 @@ export class BalanceRecordsService {
     );
     await this.balanceRecordsRepository.save(balanceRecord);
 
-    // update the account balance also
-    const account = await this.accountsRepository.findOne({
-      where: { id: balanceRecord.accountId },
-    });
-    
-    if (!account) {
-      throw new Error(`Account with id ${balanceRecord.accountId} not found`);
-    }
-    account.balance = balanceRecord.balance;
-    account.lastUpdated = new Date(balanceRecord.recordedAt);
-    await this.accountsRepository.save(account);
-
     return balanceRecord;
   }
 

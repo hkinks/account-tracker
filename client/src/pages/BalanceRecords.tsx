@@ -6,6 +6,7 @@ import BalanceRecordForm from '../components/Forms/BalanceRecordForm';
 import Button from '../components/Buttons/Button';
 import { Box } from '../components/Layout';
 import DeleteButton from '../components/Buttons/DeleteButton';
+import { Account } from './Accounts';
 
 const BalanceRecordsContainer = styled.div`
   padding: 20px;
@@ -36,17 +37,6 @@ export interface BalanceRecord {
   balance: number;
   recordedAt: Date;
   account: Account;
-}
-
-export interface Account {
-  id: string;
-  name: string;
-  description: string;
-  accountNumber: string;
-  accountType: string;
-  balance: number;
-  isActive: boolean;
-  currency: string;
 }
 
 const BalanceRecords: React.FC = () => {

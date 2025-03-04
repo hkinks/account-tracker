@@ -79,7 +79,7 @@ export class AccountsService {
     account.lastUpdated = new Date(accountDto.lastUpdated || Date.now());
 
     // Also create a separate balance record for the account
-    const balanceRecord = this.balanceRecordsService.create({
+    this.balanceRecordsService.create({
       accountId: account.id,
       balance: account.balance,
       recordedAt: new Date(accountDto.lastUpdated || Date.now()),
