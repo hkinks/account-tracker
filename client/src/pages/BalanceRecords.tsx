@@ -44,7 +44,6 @@ const BalanceRecords: React.FC = () => {
   const [balanceRecords, setBalanceRecords] = useState<BalanceRecordDto[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isFormSubmitting, _setIsFormSubmitting] = useState(false);
 
   const fetchBalanceRecords = async () => {
     setIsLoading(true);
@@ -97,12 +96,11 @@ const BalanceRecords: React.FC = () => {
 
       <Modal
         isOpen={isFormOpen}
-        onClose={() => !isFormSubmitting && setIsFormOpen(false)}
+        onClose={() => setIsFormOpen(false)}
         title="Add Balance Record"
       >
         <BalanceRecordForm 
           onSubmit={handleCreateRecord} 
-          isSubmitting={isFormSubmitting}
         />
       </Modal>
       <BalanceRecordsTable>
