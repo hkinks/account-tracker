@@ -7,21 +7,9 @@ interface AccountPieChartProps {
   accounts: Account[];
 }
 
-const ChartContainer = styled.div`
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+const ChartContent = styled.div`
   width: 100%;
-  max-width: 700px;
-  height: 400px;
-`;
-
-const Title = styled.h2`
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 18px;
-  color: #333;
+  height: 350px;
 `;
 
 // Array of colors for the pie chart segments
@@ -37,10 +25,9 @@ const AccountPieChart: React.FC<AccountPieChartProps> = ({ accounts }) => {
     }));
 
   return (
-    <ChartContainer>
-      <Title>Account Values (EUR)</Title>
+    <ChartContent>
       {eurAccounts.length > 0 ? (
-        <ResponsiveContainer width="100%" height="90%">
+        <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={eurAccounts}
@@ -71,7 +58,7 @@ const AccountPieChart: React.FC<AccountPieChartProps> = ({ accounts }) => {
       ) : (
         <p>No EUR accounts available to display</p>
       )}
-    </ChartContainer>
+    </ChartContent>
   );
 };
 

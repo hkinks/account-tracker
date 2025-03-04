@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TimelineGraph from '../components/TimelineGraph';
-import AccountStats from '../components/AccountStats';
 import AccountPieChart from '../components/AccountPieChart';
-import AccountsSummary from '../components/AccountsSummary';
+import AccountOverview from '../components/AccountOverview';
+import GraphPane from '../components/GraphPane';
 import { api } from '../services/api';
 
 const MainContainer = styled.div`
@@ -78,16 +78,25 @@ const Dashboard: React.FC = () => {
       {error && <p>Error loading data: {error}</p>}
       {accounts.length > 0 && (
         <ChartSection>
-          <AccountPieChart accounts={accounts} />
-          <AccountsSummary totalEurValue={totalEurValue} accounts={accounts} />
+          <GraphPane title="Account Distribution">
+            <AccountPieChart accounts={accounts} />
+          </GraphPane>
+          <GraphPane title="Account Overview">
+            <AccountOverview 
+              totalEurValue={totalEurValue} 
+              accounts={accounts} 
+              stats={stats}
+            />
+          </GraphPane>
         </ChartSection>
       )}
       {!loading && !error && (
         <ChartsContainer>
-          <TimelineGraph balanceRecords={balanceRecords} />
+          <GraphPane title="Balance History">
+            <TimelineGraph balanceRecords={balanceRecords} />
+          </GraphPane>
         </ChartsContainer>
       )}
-      {stats && <AccountStats stats={stats} />}
     </MainContainer>
   );
 };

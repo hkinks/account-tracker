@@ -12,13 +12,9 @@ interface TimelineGraphProps {
   balanceRecords: BalanceRecord[];
 }
 
-const GraphContainer = styled.div`
+const GraphContent = styled.div`
   width: 100%;
-  height: 400px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 350px;
   position: relative;
 `;
 
@@ -225,7 +221,7 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
   }, [balanceRecords]);
 
   return (
-    <GraphContainer>
+    <GraphContent>
       <Canvas ref={canvasRef} />
       {balanceRecords.length < 2 && (
         <NoDataMessage>
@@ -233,7 +229,7 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords }) => {
           <p>Please add at least two balance records.</p>
         </NoDataMessage>
       )}
-    </GraphContainer>
+    </GraphContent>
   );
 };
 

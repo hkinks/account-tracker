@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface StatsProps {
-  stats: {
+interface AccountOverviewProps {
+  totalEurValue: number;
+  accounts: any[];
+  stats?: {
     totalBalanceByCurrency?: Record<string, number>;
     totalAccounts: number;
     activeAccounts: number;
@@ -11,15 +13,26 @@ interface StatsProps {
   };
 }
 
+const OverviewContainer = styled.div`
+  width: 100%;
+`;
+
+const TotalAmount = styled.div`
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #2c3e50;
+`;
+
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   margin-bottom: 20px;
 `;
 
 const Card = styled.div`
-  background-color: white;
+  background-color: #f8f9fa;
   border-radius: 6px;
   padding: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -59,27 +72,35 @@ const Footer = styled.div`
   margin-top: 10px;
 `;
 
-const AccountStats: React.FC<StatsProps> = ({ stats }) => {
+const AccountOverview: React.FC<AccountOverviewProps> = ({ totalEurValue, accounts, stats }) => {
   return (
-    <>
+    <OverviewContainer>
+      <TotalAmount>
+        €{totalEurValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      </TotalAmount>
+      
       <Grid>
         <Card>
           <CardTitle>Account Summary</CardTitle>
           <StatItem>
             <StatLabel>Total Accounts:</StatLabel>
-            <StatValue>{stats.totalAccounts}</StatValue>
+            <StatValue>{accounts.length}</StatValue>
           </StatItem>
-          <StatItem>
-            <StatLabel>Active Accounts:</StatLabel>
-            <StatValue>{stats.activeAccounts}</StatValue>
-          </StatItem>
-          <StatItem>
-            <StatLabel>Total Balance Records:</StatLabel>
-            <StatValue>{stats.totalBalanceRecords}</StatValue>
-          </StatItem>
+          {stats && (
+            <>
+              <StatItem>
+                <StatLabel>Active Accounts:</StatLabel>
+                <StatValue>{stats.activeAccounts}</StatValue>
+              </StatItem>
+              <StatItem>
+                <StatLabel>Balance Records:</StatLabel>
+                <StatValue>{stats.totalBalanceRecords}</StatValue>
+              </StatItem>
+            </>
+          )}
         </Card>
 
-        {stats.totalBalanceByCurrency && (
+        {stats?.totalBalanceByCurrency && (
           <Card>
             <CardTitle>Balance by Currency</CardTitle>
             {Object.entries(stats.totalBalanceByCurrency).map(([currency, amount]) => (
@@ -91,7 +112,7 @@ const AccountStats: React.FC<StatsProps> = ({ stats }) => {
           </Card>
         )}
 
-        {stats.accountsByType && (
+        {stats?.accountsByType && (
           <Card>
             <CardTitle>Accounts by Type</CardTitle>
             {Object.entries(stats.accountsByType).map(([type, count]) => (
@@ -107,8 +128,8 @@ const AccountStats: React.FC<StatsProps> = ({ stats }) => {
       <Footer>
         Last Updated: {new Date().toLocaleString()}
       </Footer>
-    </>
+    </OverviewContainer>
   );
 };
 
-export default AccountStats; 
+export default AccountOverview; 
