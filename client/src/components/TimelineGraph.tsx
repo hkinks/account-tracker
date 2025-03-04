@@ -1,11 +1,11 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
-import { BalanceRecord } from '../pages/BalanceRecords';
+import { BalanceRecordDto } from '../pages/BalanceRecords';
 import { DEFAULT_CURRENCY } from '../constants';
 
 interface TimelineGraphProps {
-  balanceRecords: BalanceRecord[];
+  balanceRecords: BalanceRecordDto[];
   cumulative?: boolean;
 }
 
@@ -41,7 +41,7 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords, cumulativ
   }
 
   // Group records by account
-  const accountGroups = balanceRecords.reduce<Record<string, BalanceRecord[]>>((groups, record) => {
+  const accountGroups = balanceRecords.reduce<Record<string, BalanceRecordDto[]>>((groups, record) => {
     const accountId = record.account.id;
     if (!groups[accountId]) {
       groups[accountId] = [];
@@ -56,6 +56,9 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords, cumulativ
   );
 
   // Create data structure for Recharts
+  // Keep track of the last known values for each account
+  const lastKnownValues: Record<string, number> = {};
+  
   const chartData = allDates.map(date => {
     const dateObj = new Date(date);
     // Format as MM.YYYY (month and year only)
@@ -65,16 +68,28 @@ const TimelineGraph: React.FC<TimelineGraphProps> = ({ balanceRecords, cumulativ
     let runningTotal = 0;
     
     Object.entries(accountGroups).forEach(([accountId, records]) => {
+      const accountKey = `${records[0].account.name} (${DEFAULT_CURRENCY})`;
       const record = records.find(r => r.recordedAt === date);
+      
       if (record) {
-        const accountKey = `${record.account.name} (${DEFAULT_CURRENCY})`;
+        // We have data for this date
         const value = record.eurValue || record.balance;
-        
         dataPoint[accountKey] = value;
         dataPoint[`${accountKey}-id`] = accountId;
         
+        // Update the last known value for this account
+        lastKnownValues[accountKey] = value;
+        
         if (cumulative) {
           runningTotal += value;
+        }
+      } else if (lastKnownValues[accountKey] !== undefined) {
+        // No data for this date, use the last known value
+        dataPoint[accountKey] = lastKnownValues[accountKey];
+        dataPoint[`${accountKey}-id`] = accountId;
+        
+        if (cumulative) {
+          runningTotal += lastKnownValues[accountKey];
         }
       }
     });

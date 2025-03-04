@@ -6,7 +6,7 @@ import BalanceRecordForm from '../components/Forms/BalanceRecordForm';
 import Button from '../components/Buttons/Button';
 import { Box } from '../components/Layout';
 import DeleteButton from '../components/Buttons/DeleteButton';
-import { Account } from './Accounts';
+import { AccountDto } from './Accounts';
 
 const BalanceRecordsContainer = styled.div`
   padding: 20px;
@@ -32,18 +32,19 @@ export interface CreateBalanceRecordDto {
   recordedAt: Date;
 }
 
-export interface BalanceRecord {
+export interface BalanceRecordDto {
   id: string;
   balance: number;
   eurValue?: number;
   recordedAt: Date;
-  account: Account;
+  account: AccountDto;
 }
 
 const BalanceRecords: React.FC = () => {
-  const [balanceRecords, setBalanceRecords] = useState<BalanceRecord[]>([]);
+  const [balanceRecords, setBalanceRecords] = useState<BalanceRecordDto[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFormSubmitting, _setIsFormSubmitting] = useState(false);
 
   const fetchBalanceRecords = async () => {
     setIsLoading(true);
@@ -96,10 +97,13 @@ const BalanceRecords: React.FC = () => {
 
       <Modal
         isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
+        onClose={() => !isFormSubmitting && setIsFormOpen(false)}
         title="Add Balance Record"
       >
-        <BalanceRecordForm onSubmit={handleCreateRecord} />
+        <BalanceRecordForm 
+          onSubmit={handleCreateRecord} 
+          isSubmitting={isFormSubmitting}
+        />
       </Modal>
       <BalanceRecordsTable>
         <thead>

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Account, AccountType } from '../../pages/Accounts';
+import { AccountDto, AccountType } from '../../pages/Accounts';
 import { GenericForm, FormField, SelectOption } from './GenericForm';
 
 interface AccountFormProps {
-  onSubmit: (data: Account) => void;
-  initialData?: Partial<Account>;
+  onSubmit: (data: AccountDto) => void;
+  initialData?: Partial<AccountDto>;
 }
 
 const AccountForm: React.FC<AccountFormProps> = ({
@@ -54,7 +54,7 @@ const AccountForm: React.FC<AccountFormProps> = ({
   ];
 
   return (
-    <GenericForm<Account>
+    <GenericForm<AccountDto>
       fields={fields}
       initialData={initialData}
       onSubmit={onSubmit}

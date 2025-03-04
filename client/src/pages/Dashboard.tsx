@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
       {!loading && !error && (
         <ChartsContainer>
           <GraphPane title="Balance History">
-            <TimelineGraph balanceRecords={balanceRecords} cumulative={false} />
+            <TimelineGraph balanceRecords={balanceRecords} cumulative={true} />
           </GraphPane>
         </ChartsContainer>
       )}

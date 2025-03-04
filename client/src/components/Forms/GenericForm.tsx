@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import Button from '../Buttons/Button';
 import styled from 'styled-components';
 
@@ -68,6 +68,7 @@ export interface GenericFormProps<T> {
   initialData?: Partial<T>;
   onSubmit: (data: T) => void;
   submitButtonText?: string;
+  isSubmitting?: boolean;
 }
 
 // Generic form component
@@ -75,7 +76,8 @@ export function GenericForm<T extends Record<string, any>>({
   fields,
   initialData = {},
   onSubmit,
-  submitButtonText = 'Submit'
+  submitButtonText = 'Submit',
+  isSubmitting = false
 }: GenericFormProps<T>) {
   // Initialize form data from initialData or empty values
   const [formData, setFormData] = useState<T>(() => {
@@ -87,6 +89,23 @@ export function GenericForm<T extends Record<string, any>>({
     });
     return data as T;
   });
+
+  // Add this useEffect to update formData when initialData changes
+  useEffect(() => {
+    const updatedData: Record<string, any> = { ...formData };
+    let hasChanges = false;
+    
+    fields.forEach(field => {
+      if (initialData[field.name] !== undefined && initialData[field.name] !== formData[field.name]) {
+        updatedData[field.name] = initialData[field.name];
+        hasChanges = true;
+      }
+    });
+    
+    if (hasChanges) {
+      setFormData(updatedData as T);
+    }
+  }, [initialData, fields]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>

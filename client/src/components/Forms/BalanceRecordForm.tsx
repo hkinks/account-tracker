@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { CreateBalanceRecordDto } from '../../pages/BalanceRecords';
 import { GenericForm, FormField, SelectOption } from './GenericForm';
-import { Account } from '../../pages/Accounts';
+import { AccountDto } from '../../pages/Accounts';
 
 interface BalanceRecordFormProps {
     onSubmit: (data: CreateBalanceRecordDto) => void;
-    accounts?: Array<Account>;
+    accounts?: Array<AccountDto>;
     initialData?: Partial<CreateBalanceRecordDto>;
+    isSubmitting?: boolean;
 }
 
 // Main component
@@ -15,8 +16,9 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
     onSubmit,
     accounts: propAccounts,
     initialData = {},
+    isSubmitting = false,
 }) => {
-    const [accounts, setAccounts] = useState<Array<Account>>(propAccounts || []);
+    const [accounts, setAccounts] = useState<Array<AccountDto>>(propAccounts || []);
     const [isLoading, setIsLoading] = useState<boolean>(propAccounts ? false : true);
     const [error, setError] = useState<string | null>(null);
     const [formInitialData, setFormInitialData] = useState<Partial<CreateBalanceRecordDto>>({
@@ -34,8 +36,18 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
                     const data = await api.getAccounts();
                     setAccounts(data);
                     
-                    // Auto-select the first account if none is selected and accounts exist
-                    if (!formInitialData.accountId && data.length > 0) {
+                    // If we have an accountId in initialData, find that account and use its balance
+                    if (initialData.accountId !== undefined && data.length > 0) {
+                        const selectedAccount = data.find((account: AccountDto) => account.id.toString() === initialData.accountId!.toString());
+                        if (selectedAccount) {
+                            setFormInitialData(prev => ({
+                                ...prev,
+                                balance: selectedAccount.balance || 0,
+                            }));
+                        }
+                    }
+                    // Otherwise auto-select the first account if accounts exist
+                    else if (data.length > 0) {
                         setFormInitialData(prev => ({
                             ...prev,
                             accountId: data[0].id.toString(),
@@ -54,7 +66,7 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
 
             fetchAccounts();
         }
-    }, [propAccounts, formInitialData.accountId]);
+    }, [propAccounts, initialData.accountId]);
 
     // Convert accounts to select options
     const accountOptions: SelectOption[] = accounts.map(account => ({
@@ -98,21 +110,18 @@ const BalanceRecordForm: React.FC<BalanceRecordFormProps> = ({
         onSubmit(formData);
     };
 
-    if (isLoading) {
-        return <div>Loading accounts...</div>;
-    }
-
-    if (error) {
-        return <div>{error}</div>;
-    }
-
     return (
-        <GenericForm
-            fields={fields}
-            initialData={formInitialData}
-            onSubmit={handleFormSubmit}
-            submitButtonText="Submit"
-        />
+        <>
+            {isLoading && <div>Loading accounts...</div>}
+            {error && <div>{error}</div>}
+            <GenericForm
+                fields={fields}
+                initialData={formInitialData}
+                onSubmit={handleFormSubmit}
+                submitButtonText="Submit"
+                isSubmitting={isLoading || isSubmitting}
+            />
+        </>
     );
 };
 

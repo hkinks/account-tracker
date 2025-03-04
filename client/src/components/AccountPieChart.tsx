@@ -1,11 +1,11 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import styled from 'styled-components';
-import { Account } from '../pages/Accounts';
+import { AccountDto } from '../pages/Accounts';
 import { DEFAULT_CURRENCY } from '../constants';
 
 interface AccountPieChartProps {
-  accounts: Account[];
+  accounts: AccountDto[];
 }
 
 const ChartContent = styled.div`

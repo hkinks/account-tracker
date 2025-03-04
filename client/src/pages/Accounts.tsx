@@ -36,7 +36,7 @@ export enum AccountType {
   OTHER = 'other'
 }
 
-export interface Account {
+export interface AccountDto {
   id: string;
   name: string;
   accountType: AccountType;
@@ -56,11 +56,11 @@ export interface CreateAccountDto {
 }
 
 const Accounts: React.FC = () => {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accounts, setAccounts] = useState<AccountDto[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
-  const [editingAccount, setEditingAccount] = useState<Account | null>(null);
+  const [accountToDelete, setAccountToDelete] = useState<AccountDto | null>(null);
+  const [editingAccount, setEditingAccount] = useState<AccountDto | null>(null);
 
   useEffect(() => {
     fetchAccounts();
@@ -77,7 +77,7 @@ const Accounts: React.FC = () => {
       });
   };
 
-  const handleOpenModal = (account?: Account) => {
+  const handleOpenModal = (account?: AccountDto) => {
     if (account) {
       setEditingAccount(account);
     } else {
@@ -125,7 +125,7 @@ const Accounts: React.FC = () => {
     }
   };
 
-  const handleDeleteClick = (account: Account) => {
+  const handleDeleteClick = (account: AccountDto) => {
     setAccountToDelete(account);
     setIsDeleteConfirmOpen(true);
   };
