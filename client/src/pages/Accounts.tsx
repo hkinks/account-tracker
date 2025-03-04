@@ -133,6 +133,10 @@ const Accounts: React.FC = () => {
   return (
     <AccountsContainer>
       <Box margin="0 0 20px 0">
+        <h2>Total Value: {accounts.reduce((sum, account) => sum + (account.eurValue || 0), 0).toFixed(2)} EUR</h2>
+      </Box>
+      
+      <Box margin="0 0 20px 0">
         <Button onClick={handleOpenModal}>Add New Account</Button>
       </Box>
       <AccountsTable>
