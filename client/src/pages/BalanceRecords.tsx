@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { api } from '../services/api';
 import Modal from '../components/Modal/Modal';
 import BalanceRecordForm from '../components/Forms/BalanceRecordForm';
-import Button from '../components/Button';
+import Button from '../components/Buttons/Button';
 import { Box } from '../components/Layout';
-import DeleteButton from '../components/DeleteButton';
+import DeleteButton from '../components/Buttons/DeleteButton';
 
 const BalanceRecordsContainer = styled.div`
   padding: 20px;

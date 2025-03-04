@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { api } from '../services/api';
 import Modal from '../components/Modal/Modal';
 import AccountForm from '../components/Forms/AccountForm';
-import Button from '../components/Button';
+import Button from '../components/Buttons/Button';
 import { Box, Flex } from '../components/Layout';
-import DeleteButton from '../components/DeleteButton';
-import EditButton from '../components/EditButton';
+import DeleteButton from '../components/Buttons/DeleteButton';
+import EditButton from '../components/Buttons/EditButton';
 
 const AccountsContainer = styled.div`
   padding: 20px;
