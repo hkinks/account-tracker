@@ -10,11 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { BalanceRecordsService } from './balance-records.service';
-import {
-  BalanceRecordDto,
-  CreateBalanceRecordDto,
-  UpdateBalanceRecordDto,
-} from './balance-records.interface';
+import { BalanceRecordDto, UpdateBalanceRecordDto } from './balance-records.interface';
 import { BalanceRecord } from './balance-records.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
 
@@ -33,7 +29,7 @@ export class BalanceRecordsController {
     description: 'The balance record has been created.',
   })
   create(
-    @Body() createBalanceRecordDto: CreateBalanceRecordDto,
+    @Body() createBalanceRecordDto: UpdateBalanceRecordDto,
   ): Promise<BalanceRecord> {
     const balanceRecord = this.balanceRecordsService.create(createBalanceRecordDto);
     this.accountsService.update(createBalanceRecordDto.accountId, {
@@ -70,7 +66,7 @@ export class BalanceRecordsController {
   update(
     @Param('id') id: string,
     @Body() updateBalanceRecordDto: UpdateBalanceRecordDto,
-  ): Promise<BalanceRecord> {
+  ): Promise<BalanceRecordDto> {
     return this.balanceRecordsService.update(id, updateBalanceRecordDto);
   }
 

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsDate, IsUUID } from 'class-validator';
 import { Account } from 'src/accounts/accounts.entity';
 
-export class CreateBalanceRecordDto {
+export class UpdateBalanceRecordDto {
   @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
   @IsNotEmpty()
   @IsUUID()
@@ -19,14 +19,9 @@ export class CreateBalanceRecordDto {
   recordedAt: Date;
 }
 
-export class UpdateBalanceRecordDto extends CreateBalanceRecordDto {}
-
 export class BalanceRecordDto {
   @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
   id: string;
-
-  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
-  accountId: string;
 
   @ApiProperty({ example: 1000.5 })
   balance: number;

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Account, CreateBalanceRecordDto } from '../../pages/BalanceRecords';
+import { CreateBalanceRecordDto } from '../../pages/BalanceRecords';
 import { GenericForm, FormField, SelectOption } from './GenericForm';
+import { Account } from '../../pages/Accounts';
 
 interface BalanceRecordFormProps {
     onSubmit: (data: CreateBalanceRecordDto) => void;

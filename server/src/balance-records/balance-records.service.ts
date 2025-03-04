@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BalanceRecord } from './balance-records.entity';
-import {
-  BalanceRecordDto,
-  CreateBalanceRecordDto,
-  UpdateBalanceRecordDto,
-} from './balance-records.interface';
+import { BalanceRecordDto, UpdateBalanceRecordDto } from './balance-records.interface';
 import { Account } from 'src/accounts/accounts.entity';
 import { CurrencyConverterService } from '../currency/currency-converter.service';
 
@@ -21,7 +17,7 @@ export class BalanceRecordsService {
   ) {}
 
   async create(
-    createBalanceRecordDto: CreateBalanceRecordDto,
+    createBalanceRecordDto: UpdateBalanceRecordDto,
   ): Promise<BalanceRecord> {
     // Ensure accountId is present in the DTO
     if (!createBalanceRecordDto.accountId) {
@@ -58,7 +54,6 @@ export class BalanceRecordsService {
         dto.id = record.id;
         dto.balance = Number(record.balance);
         dto.recordedAt = record.recordedAt;
-        dto.accountId = record.accountId;
         dto.account = record.account;
         
         // If this is a crypto account, add EUR value
@@ -98,7 +93,7 @@ export class BalanceRecordsService {
   async update(
     id: string,
     updateBalanceRecordDto: UpdateBalanceRecordDto,
-  ): Promise<BalanceRecord> {
+  ): Promise<BalanceRecordDto> {
     await this.balanceRecordsRepository.update(id, updateBalanceRecordDto);
     return this.findOne(id);
   }
