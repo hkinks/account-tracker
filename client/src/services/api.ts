@@ -1,7 +1,7 @@
 import { CreateAccountDto } from "../pages/Accounts";
 import { CreateBalanceRecordDto } from "../pages/BalanceRecords";
 
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+const API_BASE_URL = '/api/v1';
 
 export const api = {
   async getTransactions() {
