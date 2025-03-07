@@ -10,7 +10,7 @@ interface AccountPieChartProps {
 
 const ChartContent = styled.div`
   width: 100%;
-  height: 350px;
+  height: 100%;
 `;
 
 // Array of colors for the pie chart segments
@@ -35,7 +35,7 @@ const AccountPieChart: React.FC<AccountPieChartProps> = ({ accounts }) => {
               cx="50%"
               cy="50%"
               labelLine={true}
-              outerRadius={120}
+              outerRadius={100}
               fill="#8884d8"
               dataKey="value"
               nameKey="name"
@@ -49,10 +49,10 @@ const AccountPieChart: React.FC<AccountPieChartProps> = ({ accounts }) => {
               formatter={(value: number) => [`${DEFAULT_CURRENCY}${value.toFixed(2)}`, 'Balance']}
             />
             <Legend 
-              layout="vertical" 
-              verticalAlign="middle" 
-              align="left"
-              wrapperStyle={{ left: 0, top: 0, paddingLeft: '10px' }}
+              layout="horizontal" 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: 20 }}
             />
           </PieChart>
         </ResponsiveContainer>
